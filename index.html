@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой архив программ и информации</title>
+    <style>
+        /* ----- Общие стили ----- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            height: 100vh;
+            background: #f4f6f9;
+            color: #333;
+        }
+
+        /* ----- Левая панель (категории) ----- */
+        .sidebar {
+            width: 260px;
+            background: #1e293b;
+            color: #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+            flex-shrink: 0;
+            overflow-y: auto;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            font-weight: 300;
+            letter-spacing: 1px;
+            padding: 0 20px 30px 20px;
+            border-bottom: 1px solid #334155;
+            color: #facc15;
+            font-size: 22px;
+        }
+
+        .sidebar h2 span {
+            display: block;
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 6px;
+            letter-spacing: 0;
+        }
+
+        .category-list {
+            list-style: none;
+            margin-top: 10px;
+        }
+
+        .category-list li {
+            padding: 14px 24px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
+            font-weight: 500;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .category-list li:hover {
+            background: #334155;
+            border-left-color: #facc15;
+        }
+
+        .category-list li.active {
+            background: #0f172a;
+            border-left-color: #facc15;
+            color: #facc15;
+        }
+
+        .category-list li .icon {
+            font-size: 20px;
+            width: 28px;
+            text-align: center;
+        }
+
+        /* ----- Правая область (контент) ----- */
+        .main-content {
+            flex: 1;
+            padding: 30px 40px;
+            overflow-y: auto;
+            background: #f8fafc;
+        }
+
+        .main-content h1 {
+            font-size: 28px;
+            font-weight: 300;
+            margin-bottom: 8px;
+            color: #0f172a;
+        }
+
+        .main-content .subtitle {
+            color: #64748b;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 15px;
+        }
+
+        /* Карточки программ / файлов */
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 18px;
+        }
+
+        .item-card {
+            background: white;
+            border-radius: 12px;
+            padding: 18px 18px 14px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e9edf2;
+            transition: 0.15s ease;
+            cursor: default;
+        }
+
+        .item-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            border-color: #cbd5e1;
+        }
+
+        .item-card .item-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .item-card .item-name {
+            font-weight: 600;
+            font-size: 16px;
+            color: #0f172a;
+        }
+
+        .item-card .item-desc {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        .item-card .item-action {
+            margin-top: 12px;
+            display: inline-block;
+            background: #eef2f6;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #1e293b;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .item-card .item-action:hover {
+            background: #1e293b;
+            color: white;
+        }
+
+        /* Информационный блок (не программы) */
+        .info-block {
+            background: white;
+            border-radius: 12px;
+            padding: 24px 28px;
+            border-left: 6px solid #facc15;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            margin-bottom: 25px;
+        }
+
+        .info-block h3 {
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .info-block p {
+            line-height: 1.7;
+            color: #334155;
+        }
+
+        /* ----- Адаптивность ----- */
+        @media (max-width: 700px) {
+            body {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                flex-direction: row;
+                flex-wrap: wrap;
+                padding: 10px 15px;
+                align-items: center;
+            }
+            .sidebar h2 {
+                padding: 0 15px 0 0;
+                border-bottom: none;
+                font-size: 18px;
+                width: auto;
+            }
+            .sidebar h2 span {
+                display: none;
+            }
+            .category-list {
+                display: flex;
+                flex-wrap: wrap;
+                margin-top: 0;
+                gap: 6px;
+            }
+            .category-list li {
+                padding: 8px 14px;
+                border-left: none;
+                border-bottom: 2px solid transparent;
+                font-size: 13px;
+            }
+            .category-list li.active {
+                border-bottom-color: #facc15;
+                border-left-color: transparent;
+            }
+            .main-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== ЛЕВАЯ ПАНЕЛЬ ===== -->
+    <aside class="sidebar">
+        <h2>
+            📁 Мой архив
+            <span>информация · программы</span>
+        </h2>
+        <ul class="category-list" id="categoryList">
+            <li class="active" data-category="home">
+                <span class="icon">🏠</span> Главная
+            </li>
+            <li data-category="utils">
+                <span class="icon">🛠️</span> Утилиты
+            </li>
+            <li data-category="dev">
+                <span class="icon">💻</span> Разработка
+            </li>
+            <li data-category="design">
+                <span class="icon">🎨</span> Дизайн
+            </li>
+            <li data-category="docs">
+                <span class="icon">📄</span> Документация
+            </li>
+            <li data-category="notes">
+                <span class="icon">📝</span> Заметки
+            </li>
+        </ul>
+    </aside>
+
+    <!-- ===== ПРАВАЯ ОБЛАСТЬ ===== -->
+    <main class="main-content" id="mainContent">
+        <!-- Содержимое будет вставлено через JavaScript -->
+    </main>
+
+    <script>
+        // ============================================================
+        //  ДАННЫЕ (категории + содержимое)
+        // ============================================================
+        const data = {
+            home: {
+                title: '🏠 Главная',
+                subtitle: 'Добро пожаловать в ваш личный архив',
+                type: 'info',
+                content: `
+                    <div class="info-block">
+                        <h3>📌 Здесь вы можете хранить:</h3>
+                        <p>
+                            ✔ Программы и утилиты<br>
+                            ✔ Рабочие заметки и документацию<br>
+                            ✔ Ссылки на полезные ресурсы<br>
+                            ✔ Скрипты, настройки, инструкции
+                        </p>
+                        <p style="margin-top:12px; color:#64748b;">
+                            Выберите категорию слева, чтобы просмотреть содержимое.
+                        </p>
+                    </div>
+                    <div style="color:#94a3b8; font-size:14px; margin-top:20px;">
+                        ⚡ Это простой шаблон. Вы можете редактировать данные в JavaScript.
+                    </div>
+                `
+            },
+            utils: {
+                title: '🛠️ Утилиты',
+                subtitle: 'Системные и вспомогательные программы',
+                type: 'grid',
+                items: [
+                    { icon: '🧹', name: 'CCleaner', desc: 'Очистка системы' },
+                    { icon: '📦', name: '7-Zip', desc: 'Архиватор' },
+                    { icon: '🖥️', name: 'HWMonitor', desc: 'Мониторинг железа' },
+                    { icon: '🔐', name: 'KeePass', desc: 'Менеджер паролей' },
+                ]
+            },
+            dev: {
+                title: '💻 Разработка',
+                subtitle: 'IDE, редакторы, инструменты для кода',
+                type: 'grid',
+                items: [
+                    { icon: '📝', name: 'VS Code', desc: 'Редактор кода' },
+                    { icon: '🐍', name: 'PyCharm', desc: 'Python IDE' },
+                    { icon: '🌐', name: 'Chrome DevTools', desc: 'Отладка веб-приложений' },
+                    { icon: '📂', name: 'Git', desc: 'Система контроля версий' },
+                ]
+            },
+            design: {
+                title: '🎨 Дизайн',
+                subtitle: 'Графика, макеты, редакторы',
+                type: 'grid',
+                items: [
+                    { icon: '🖌️', name: 'Figma', desc: 'Дизайн интерфейсов' },
+                    { icon: '🖼️', name: 'GIMP', desc: 'Растровый редактор' },
+                    { icon: '📐', name: 'Inkscape', desc: 'Векторная графика' },
+                    { icon: '🎬', name: 'DaVinci Resolve', desc: 'Монтаж видео' },
+                ]
+            },
+            docs: {
+                title: '📄 Документация',
+                subtitle: 'Инструкции, руководства, PDF',
+                type: 'grid',
+                items: [
+                    { icon: '📘', name: 'Руководство по Python', desc: 'Базовый синтаксис' },
+                    { icon: '📙', name: 'Docker Cheatsheet', desc: 'Команды Docker' },
+                    { icon: '📗', name: 'GitHub Actions', desc: 'CI/CD примеры' },
+                    { icon: '📕', name: 'Markdown Guide', desc: 'Оформление README' },
+                ]
+            },
+            notes: {
+                title: '📝 Заметки',
+                subtitle: 'Быстрые записи и идеи',
+                type: 'info',
+                content: `
+                    <div class="info-block">
+                        <h3>🧠 Идеи / напоминания</h3>
+                        <p>
+                            • Обновить драйверы на ноутбуке<br>
+                            • Написать статью про Docker<br>
+                            • Сделать бэкап базы данных<br>
+                            • Изучить TypeScript
+                        </p>
+                    </div>
+                    <div class="info-block" style="border-left-color:#3b82f6;">
+                        <h3>🔗 Полезные ссылки</h3>
+                        <p>
+                            <a href="#" style="color:#2563eb; text-decoration:none;">→ Habr</a><br>
+                            <a href="#" style="color:#2563eb; text-decoration:none;">→ GitHub Trending</a><br>
+                            <a href="#" style="color:#2563eb; text-decoration:none;">→ Stack Overflow</a>
+                        </p>
+                    </div>
+                `
+            }
+        };
+
+        // ============================================================
+        //  ОТРИСОВКА
+        // ============================================================
+        function renderCategory(categoryKey) {
+            const section = data[categoryKey];
+            if (!section) return;
+
+            const container = document.getElementById('mainContent');
+
+            // Если это информационная страница
+            if (section.type === 'info') {
+                container.innerHTML = `
+                    <h1>${section.title}</h1>
+                    <div class="subtitle">${section.subtitle}</div>
+                    ${section.content}
+                `;
+                return;
+            }
+
+            // Если это сетка программ/файлов
+            if (section.type === 'grid' && section.items) {
+                let cardsHtml = section.items.map(item => `
+                    <div class="item-card">
+                        <div class="item-icon">${item.icon}</div>
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-desc">${item.desc}</div>
+                        <a href="#" class="item-action">Подробнее →</a>
+                    </div>
+                `).join('');
+
+                container.innerHTML = `
+                    <h1>${section.title}</h1>
+                    <div class="subtitle">${section.subtitle}</div>
+                    <div class="items-grid">${cardsHtml}</div>
+                `;
+            }
+        }
+
+        // ============================================================
+        //  НАВИГАЦИЯ (клики по категориям)
+        // ============================================================
+        const categoryItems = document.querySelectorAll('.category-list li');
+
+        categoryItems.forEach(item => {
+            item.addEventListener('click', function() {
+                // Убираем active у всех
+                categoryItems.forEach(li => li.classList.remove('active'));
+                this.classList.add('active');
+
+                const category = this.dataset.category;
+                renderCategory(category);
+            });
+        });
+
+        // ============================================================
+        //  СТАРТОВАЯ ЗАГРУЗКА (Главная)
+        // ============================================================
+        renderCategory('home');
+    </script>
+
+</body>
+</html>
