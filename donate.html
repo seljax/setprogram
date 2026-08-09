@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donate :: SelJax</title>
+    <link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            font-family: 'Abel', 'Courier New', monospace;
+            background: #0b0e14;
+            color: #a0f0a0;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: radial-gradient(circle at 20% 30%, #0f1a0f 0%, #030503 100%);
+            position: relative;
+        }
+
+        /* эффект сканирующей линии */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(0deg,
+                rgba(0, 255, 0, 0.015) 0px,
+                rgba(0, 255, 0, 0.015) 2px,
+                transparent 2px,
+                transparent 8px);
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        /* ----- ЭФФЕКТ ДОЖДЯ ----- */
+        .rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 255, 0, 0.03) 0,
+                rgba(0, 255, 0, 0.06) 2px,
+                transparent 4px
+            );
+            animation: rain 10s linear infinite;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes rain {
+            0% {
+                transform: translateY(-100%);
+            }
+            100% {
+                transform: translateY(100%);
+            }
+        }
+
+        /* ----- ЛОГОТИП (правый нижний угол) ----- */
+        .logo {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+            opacity: 0.5;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .logo:hover {
+            opacity: 1;
+        }
+
+        .logo img {
+            max-height: 40px;
+            width: auto;
+            filter: drop-shadow(0 0 10px rgba(0, 255, 0, 0.2));
+        }
+
+        /* ----- КНОПКА НАЗАД ----- */
+        .back-btn {
+            position: fixed;
+            top: 25px;
+            left: 30px;
+            z-index: 1000;
+            color: #4a7a4a;
+            text-decoration: none;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: 0.3s;
+            border: 1px solid #1f3a2a;
+            padding: 8px 20px;
+            border-radius: 4px;
+        }
+
+        .back-btn:hover {
+            color: #b0f0b0;
+            border-color: #4a8a4a;
+            box-shadow: 0 0 20px rgba(0, 60, 0, 0.2);
+        }
+
+        .back-btn::before {
+            content: '← ';
+            color: #3a7a3a;
+        }
+
+        /* ----- ЗАГОЛОВОК "Архив SelJax" (правый верхний угол) ----- */
+        .header-title {
+            position: fixed;
+            top: 25px;
+            right: 30px;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .matrix-text {
+            color: #0f0;
+            font-size: 28px;
+            font-family: 'Courier New', monospace;
+            position: relative;
+            text-shadow: 0 0 10px #0f0, 0 0 20px #0f0, 0 0 30px #0f0;
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+
+        .matrix-text::before {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            animation: glitch 2s infinite;
+            clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+            transform: translate(-2px, -2px);
+            color: #0f0;
+            text-shadow: 0 0 5px #0f0, 0 0 15px #0f0;
+        }
+
+        @keyframes glitch {
+            0%, 100% {
+                clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+                transform: translate(0);
+            }
+            33% {
+                clip-path: polygon(0 0, 100% 0, 100% 15%, 0 15%);
+                transform: translate(-3px, -3px);
+            }
+            66% {
+                clip-path: polygon(0 85%, 100% 85%, 100% 100%, 0 100%);
+                transform: translate(3px, 3px);
+            }
+        }
+
+        /* ----- ОСНОВНОЙ КОНТЕЙНЕР ----- */
+        .donate-container {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .donate-title {
+            font-size: 48px;
+            font-weight: 700;
+            color: #0f0;
+            text-shadow: 0 0 20px #0f0, 0 0 40px #0f0, 0 0 80px rgba(0, 255, 0, 0.2);
+            font-family: 'Courier New', monospace;
+            letter-spacing: 8px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .donate-title .highlight {
+            color: #80d080;
+            text-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+        }
+
+        .donate-subtitle {
+            font-size: 16px;
+            color: #4f7a4f;
+            letter-spacing: 3px;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+        }
+
+        .donate-subtitle::before {
+            content: '$ ';
+            color: #3a7a3a;
+        }
+
+        /* ----- КАРТОЧКИ ДОНАТА (3 штуки) ----- */
+        .donate-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 10px;
+        }
+
+        .donate-card {
+            background: rgba(12, 20, 28, 0.85);
+            border: 1px solid #1f3a2a;
+            padding: 32px 20px;
+            border-radius: 0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: #a0e0a0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .donate-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #60d060;
+            transition: 0.3s ease;
+        }
+
+        .donate-card:hover {
+            transform: translateY(-5px);
+            border-color: #50b050;
+            box-shadow: 0 0 40px rgba(0, 60, 0, 0.2);
+            background: rgba(13, 26, 34, 0.9);
+        }
+
+        .donate-card:hover::after {
+            width: 100%;
+        }
+
+        .donate-card:active {
+            transform: scale(0.97);
+        }
+
+        .donate-card .icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .donate-card .name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #b0f0b0;
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
+            letter-spacing: 1px;
+        }
+
+        .donate-card .desc {
+            font-size: 12px;
+            color: #5a8a5a;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 8px;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* ----- ТЕРМИНАЛЬНАЯ СТРОКА ----- */
+        .terminal-line {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 30px;
+            color: #4a7a4a;
+            font-size: 13px;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 20px;
+            background: #4a7a4a;
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* ----- АДАПТИВНОСТЬ ----- */
+        @media (max-width: 720px) {
+            .donate-title {
+                font-size: 32px;
+                letter-spacing: 4px;
+            }
+            .donate-grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+                max-width: 320px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .donate-card {
+                padding: 24px 20px;
+            }
+            .donate-card .icon {
+                font-size: 32px;
+            }
+            .donate-card .name {
+                font-size: 16px;
+            }
+            .matrix-text {
+                font-size: 20px;
+            }
+            .header-title {
+                top: 15px;
+                right: 20px;
+            }
+            .back-btn {
+                top: 15px;
+                left: 20px;
+                font-size: 12px;
+                padding: 6px 14px;
+            }
+            .logo img {
+                max-height: 30px;
+            }
+            .logo {
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .donate-title {
+                font-size: 24px;
+                letter-spacing: 2px;
+            }
+            .donate-subtitle {
+                font-size: 13px;
+                letter-spacing: 2px;
+                margin-bottom: 28px;
+            }
+            .donate-grid {
+                gap: 12px;
+                max-width: 280px;
+            }
+            .donate-card {
+                padding: 20px 16px;
+            }
+            .donate-card .icon {
+                font-size: 28px;
+                margin-bottom: 8px;
+            }
+            .donate-card .name {
+                font-size: 14px;
+            }
+            .donate-card .desc {
+                font-size: 10px;
+                margin-top: 4px;
+            }
+            .matrix-text {
+                font-size: 16px;
+            }
+            .header-title {
+                top: 12px;
+                right: 15px;
+            }
+            .back-btn {
+                top: 12px;
+                left: 15px;
+                font-size: 10px;
+                padding: 4px 12px;
+            }
+            .logo img {
+                max-height: 24px;
+            }
+            .logo {
+                bottom: 15px;
+                right: 15px;
+            }
+            .terminal-line {
+                font-size: 11px;
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== ЭФФЕКТ ДОЖДЯ ===== -->
+    <div class="rain"></div>
+
+    <!-- ===== КНОПКА НАЗАД ===== -->
+    <a href="index.html" class="back-btn">Назад</a>
+
+    <!-- ===== ЗАГОЛОВОК "Архив SelJax" ===== -->
+    <div class="header-title">
+        <div class="matrix-text" data-text="Архив SelJax">Архив SelJax</div>
+    </div>
+
+    <!-- ===== ЛОГОТИП ===== -->
+    <div class="logo">
+        <img src="images/seljax_logo.png" alt="Seljax Logo">
+    </div>
+
+    <!-- ===== ОСНОВНОЙ КОНТЕНТ ===== -->
+    <div class="donate-container">
+        <div class="donate-title">
+            <span class="highlight">♢</span> DONATE <span class="highlight">♢</span>
+        </div>
+        <div class="donate-subtitle">support the project</div>
+
+        <!-- Три способа доната -->
+        <div class="donate-grid">
+            <a href="#" class="donate-card" onclick="donate('DonationAlerts')">
+                <span class="icon">🎯</span>
+                <div class="name">DonationAlerts</div>
+                <div class="desc">Стримерские донаты</div>
+            </a>
+            <a href="#" class="donate-card" onclick="donate('Boosty')">
+                <span class="icon">🚀</span>
+                <div class="name">Boosty</div>
+                <div class="desc">Подписка и донаты</div>
+            </a>
+            <a href="#" class="donate-card" onclick="donate('Crypto')">
+                <span class="icon">₿</span>
+                <div class="name">Криптовалюта</div>
+                <div class="desc">BTC · USDT · TON · ETH</div>
+            </a>
+        </div>
+
+        <!-- Терминальная строка -->
+        <div class="terminal-line">
+            <span>root@archive:~$</span>
+            <span>./donate.sh --support</span>
+            <span class="cursor"></span>
+        </div>
+    </div>
+
+    <script>
+        // ================================================================
+        // ФУНКЦИИ ДОНАТА
+        // ================================================================
+        function donate(method) {
+            const messages = {
+                'DonationAlerts': '🔗 Ссылка для доната:\n\nhttps://www.donationalerts.com/r/seljax\n\nСпасибо за поддержку! ❤️',
+                'Boosty': '🔗 Ссылка на Boosty:\n\nhttps://boosty.to/seljax\n\nПодписывайтесь и поддерживайте проект! 🚀',
+                'Crypto': '💎 Криптовалютные кошельки:\n\nBTC: bc1q...\nUSDT (TRC20): T...\nTON: UQ...\nETH: 0x...\n\nСпасибо за поддержку! ❤️'
+            };
+            alert(messages[method] || 'Спасибо за поддержку! ❤️');
+            console.log(`%c💰 Donate via ${method}`, 'color:#0f0;font-size:14px;');
+            return false;
+        }
+
+        // Проверка на наличие логотипа
+        const logoImg = document.querySelector('.logo img');
+        if (logoImg) {
+            logoImg.addEventListener('error', function() {
+                this.style.display = 'none';
+                console.warn('Логотип не найден: images/seljax_logo.png');
+            });
+        }
+
+        console.log('%c💚 Спасибо за поддержку проекта!', 'color:#0f0;font-size:16px;');
+        console.log('💰 Donation page loaded');
+    </script>
+
+</body>
+</html>

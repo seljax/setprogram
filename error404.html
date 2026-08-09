@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 :: PAGE NOT FOUND</title>
+  <link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
+  <style>
+    /* ----- базовый сброс ----- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 100vw;
+      height: 100vh;
+      font-family: 'Abel', 'Courier New', monospace;
+      background: #0b0e14;
+      color: #a0f0a0;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-image: radial-gradient(circle at 20% 30%, #0f1a0f 0%, #030503 100%);
+      position: relative;
+    }
+
+    /* эффект сканирующей линии */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(0deg,
+        rgba(0, 255, 0, 0.015) 0px,
+        rgba(0, 255, 0, 0.015) 2px,
+        transparent 2px,
+        transparent 8px);
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    /* ----- ЭФФЕКТ ДОЖДЯ ----- */
+    .rain {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 255, 0, 0.03) 0,
+        rgba(0, 255, 0, 0.06) 2px,
+        transparent 4px
+      );
+      animation: rain 10s linear infinite;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    @keyframes rain {
+      0% {
+        transform: translateY(-100%);
+      }
+      100% {
+        transform: translateY(100%);
+      }
+    }
+
+    /* ----- ОСНОВНОЙ КОНТЕЙНЕР 404 ----- */
+    .error-container {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 40px;
+      max-width: 800px;
+    }
+
+    /* ----- КОД ОШИБКИ (404) ----- */
+    .error-code {
+      font-size: 160px;
+      font-weight: 700;
+      color: #0f0;
+      text-shadow: 0 0 20px #0f0, 0 0 40px #0f0, 0 0 80px rgba(0, 255, 0, 0.3);
+      font-family: 'Courier New', monospace;
+      line-height: 1;
+      margin-bottom: 10px;
+      position: relative;
+      display: inline-block;
+      letter-spacing: 10px;
+    }
+
+    .error-code::before {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      animation: glitch 3s infinite;
+      clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+      transform: translate(-4px, -4px);
+      color: #0f0;
+      text-shadow: 0 0 10px #0f0, 0 0 30px #0f0;
+    }
+
+    .error-code::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      animation: glitch2 3s infinite;
+      clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+      transform: translate(4px, 4px);
+      color: #0f0;
+      text-shadow: 0 0 10px #0f0, 0 0 30px #0f0;
+    }
+
+    @keyframes glitch {
+      0%, 100% {
+        clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+        transform: translate(0);
+      }
+      33% {
+        clip-path: polygon(0 0, 100% 0, 100% 15%, 0 15%);
+        transform: translate(-6px, -6px);
+      }
+      66% {
+        clip-path: polygon(0 85%, 100% 85%, 100% 100%, 0 100%);
+        transform: translate(6px, 6px);
+      }
+    }
+
+    @keyframes glitch2 {
+      0%, 100% {
+        clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+        transform: translate(0);
+      }
+      33% {
+        clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+        transform: translate(4px, -4px);
+      }
+      66% {
+        clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+        transform: translate(-4px, 4px);
+      }
+    }
+
+    /* ----- ТЕКСТ ОШИБКИ ----- */
+    .error-title {
+      font-size: 32px;
+      color: #80d080;
+      text-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+      margin-bottom: 16px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      font-weight: 300;
+    }
+
+    .error-title::before {
+      content: '> ';
+      color: #50b050;
+    }
+
+    .error-message {
+      font-size: 18px;
+      color: #6f9a6f;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      letter-spacing: 1px;
+      font-weight: 300;
+    }
+
+    .error-message .highlight {
+      color: #b0f0b0;
+      text-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+    }
+
+    /* ----- КНОПКА НАЗАД ----- */
+    .back-button {
+      display: inline-block;
+      padding: 14px 40px;
+      border: 1px solid #1f3a1f;
+      color: #70c070;
+      text-decoration: none;
+      font-size: 16px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+      background: transparent;
+      cursor: pointer;
+      font-family: 'Abel', 'Courier New', monospace;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .back-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.1), transparent);
+      transition: 0.5s;
+    }
+
+    .back-button:hover::before {
+      left: 100%;
+    }
+
+    .back-button:hover {
+      border-color: #50b050;
+      color: #b0ffb0;
+      box-shadow: 0 0 30px rgba(0, 60, 0, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .back-button:active {
+      transform: scale(0.97);
+    }
+
+    .back-button .arrow {
+      display: inline-block;
+      margin-right: 10px;
+      transition: 0.3s;
+    }
+
+    .back-button:hover .arrow {
+      transform: translateX(-5px);
+    }
+
+    /* ----- ТЕРМИНАЛЬНАЯ СТРОКА (мигающий курсор) ----- */
+    .terminal-line {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 20px;
+      color: #4a7a4a;
+      font-size: 13px;
+      font-family: 'Courier New', monospace;
+      letter-spacing: 1px;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 10px;
+      height: 20px;
+      background: #4a7a4a;
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0;
+      }
+    }
+
+    /* ----- ЛОГОТИП (правый нижний угол) ----- */
+    .logo {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 1000;
+      opacity: 0.5;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .logo:hover {
+      opacity: 1;
+    }
+
+    .logo img {
+      max-height: 40px;
+      width: auto;
+      filter: drop-shadow(0 0 10px rgba(0, 255, 0, 0.2));
+    }
+
+    /* ----- АДАПТИВНОСТЬ ----- */
+    @media (max-width: 720px) {
+      .error-code {
+        font-size: 100px;
+        letter-spacing: 5px;
+      }
+      .error-title {
+        font-size: 24px;
+      }
+      .error-message {
+        font-size: 15px;
+      }
+      .back-button {
+        padding: 12px 30px;
+        font-size: 14px;
+      }
+      .logo img {
+        max-height: 30px;
+      }
+      .logo {
+        bottom: 20px;
+        right: 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .error-code {
+        font-size: 70px;
+        letter-spacing: 3px;
+      }
+      .error-title {
+        font-size: 18px;
+        letter-spacing: 2px;
+      }
+      .error-message {
+        font-size: 13px;
+        padding: 0 10px;
+      }
+      .back-button {
+        padding: 10px 24px;
+        font-size: 12px;
+        letter-spacing: 2px;
+      }
+      .logo img {
+        max-height: 24px;
+      }
+      .logo {
+        bottom: 15px;
+        right: 15px;
+      }
+      .terminal-line {
+        font-size: 11px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== ЭФФЕКТ ДОЖДЯ ===== -->
+  <div class="rain"></div>
+
+  <!-- ===== ЛОГОТИП (правый нижний угол) ===== -->
+  <div class="logo">
+    <img src="images/seljax_logo.png" alt="Seljax Logo">
+  </div>
+
+  <!-- ===== ОСНОВНОЙ КОНТЕНТ ===== -->
+  <div class="error-container">
+    <!-- Код ошибки с глитч-эффектом -->
+    <div class="error-code" data-text="404">404</div>
+
+    <!-- Заголовок -->
+    <div class="error-title">Страница не найдена</div>
+
+    <!-- Сообщение -->
+    <div class="error-message">
+      <span class="highlight">[ОШИБКА]</span> Запрашиваемая страница отсутствует в системе.<br>
+      Проверьте правильность URL или вернитесь на главную.
+    </div>
+
+    <!-- Кнопка возврата -->
+    <a href="index.html" class="back-button">
+      <span class="arrow">←</span> На главную
+    </a>
+
+    <!-- Терминальная строка -->
+    <div class="terminal-line">
+      <span>root@archive:~$</span>
+      <span>./go_back.sh</span>
+      <span class="cursor"></span>
+    </div>
+  </div>
+
+  <script>
+    // Небольшая интерактивность: при клике на терминальную строку
+    // можно добавить эффект "печати"
+    const terminalLine = document.querySelector('.terminal-line');
+    if (terminalLine) {
+      terminalLine.addEventListener('click', function() {
+        const cursor = this.querySelector('.cursor');
+        if (cursor) {
+          cursor.style.animation = 'none';
+          setTimeout(() => {
+            cursor.style.animation = 'blink 1s step-end infinite';
+          }, 10);
+        }
+      });
+    }
+
+    // Проверяем, есть ли логотип, если нет — скрываем ошибку в консоли
+    const logoImg = document.querySelector('.logo img');
+    if (logoImg) {
+      logoImg.addEventListener('error', function() {
+        this.style.display = 'none';
+        console.warn('Логотип не найден: images/seljax_logo.png');
+      });
+    }
+  </script>
+
+</body>
+</html>
