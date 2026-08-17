@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SelRadio :: SelJax</title>
+    <link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
+    <style>
+        /* ... (все стили как в предыдущей версии, но с изменениями ниже) ... */
+        /* Добавьте этот стиль для статуса сервера */
+        .server-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #4a7a4a;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 16px;
+        }
+
+        .server-status .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            transition: 0.3s;
+        }
+
+        .server-status .dot.online {
+            background: #4a9a4a;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+        }
+
+        .server-status .dot.offline {
+            background: #7a4a4a;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <!-- ===== ВСЁ ТО ЖЕ МЕНЮ И ЭФФЕКТЫ ===== -->
+
+    <div class="radio-container">
+        <div class="radio-title">
+            <span class="highlight">♢</span> SelRadio <span class="highlight">♢</span>
+        </div>
+        <div class="radio-subtitle">прямой эфир · SelJax Radio</div>
+
+        <!-- Статус сервера -->
+        <div class="server-status">
+            <span class="dot" id="statusDot"></span>
+            <span id="statusText">Подключение...</span>
+        </div>
+
+        <!-- Информация о треке -->
+        <div class="track-info">
+            <div class="track-name" id="trackName">Ожидание...</div>
+            <div class="track-artist" id="trackArtist">SelJax Radio</div>
+        </div>
+
+        <!-- Прогресс-бар -->
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-time">
+                <span id="currentTime">0:00</span>
+                <span id="totalTime">0:00</span>
+            </div>
+        </div>
+
+        <!-- Кнопки управления -->
+        <div class="controls">
+            <button class="btn" id="prevBtn" title="Предыдущий">⏮</button>
+            <button class="btn btn-primary" id="playBtn">▶</button>
+            <button class="btn" id="nextBtn" title="Следующий">⏭</button>
+            <button class="btn" id="shuffleBtn" title="Перемешать">🔀</button>
+            <button class="btn" id="repeatBtn" title="Повтор">🔁</button>
+        </div>
+
+        <!-- Плейлист -->
+        <div class="playlist" id="playlist"></div>
+
+        <div class="terminal-line">
+            <span>root@archive:~$</span>
+            <span>./radio.sh --stream seljax</span>
+            <span class="cursor"></span>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script>
+        // ============================================================
+        // ПОДКЛЮЧЕНИЕ К РАДИО-СЕРВЕРУ
+        // ============================================================
+
+        // Если сервер запущен на localhost:3000
+        const SERVER_URL = 'http://localhost:3000';
+        // Если сервер на другом адресе — измените
+
+        const socket = io(SERVER_URL);
+        let playlist = [];
+        let currentTrack = null;
+        let currentIndex = 0;
+        let isPlaying = false;
+        let currentTime = 0;
+
+        // DOM элементы
+        const trackName = document.getElementById('trackName');
+        const trackArtist = document.getElementById('trackArtist');
+        const playBtn = document.getElementById('playBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const shuffleBtn = document.getElementById('shuffleBtn');
+        const repeatBtn = document.getElementById('repeatBtn');
+        const progressFill = document.getElementById('progressFill');
+        const currentTimeEl = document.getElementById('currentTime');
+        const totalTimeEl = document.getElementById('totalTime');
+        const playlistEl = document.getElementById('playlist');
+        const statusDot = document.getElementById('statusDot');
+        const statusText = document.getElementById('statusText');
+
+        // Форматирование времени
+        function formatTime(seconds) {
+            if (isNaN(seconds) || !isFinite(seconds)) return '0:00';
+            const min = Math.floor(seconds / 60);
+            const sec = Math.floor(seconds % 60);
+            return min + ':' + (sec < 10 ? '0' : '') + sec;
+        }
+
+        // Обновление статуса
+        function setStatus(online) {
+            statusDot.className = 'dot ' + (online ? 'online' : 'offline');
+            statusText.textContent = online ? 'Сервер онлайн' : 'Сервер недоступен';
+        }
+
+        // Рендер плейлиста
+        function renderPlaylist() {
+            playlistEl.innerHTML = '';
+            playlist.forEach((track, idx) => {
+                const li = document.createElement('div');
+                li.className = 'playlist-item' + (idx === currentIndex ? ' active' : '');
+                const isActive = idx === currentIndex && isPlaying;
+                li.innerHTML = `
+                    <span class="playlist-name">${track.name}</span>
+                    <span class="playlist-status${isActive ? ' playing' : ''}">${isActive ? '▶' : ''}</span>
+                `;
+                li.addEventListener('click', () => {
+                    fetch(`${SERVER_URL}/api/play/${idx}`, { method: 'POST' });
+                });
+                playlistEl.appendChild(li);
+            });
+        }
+
+        // Обновление информации о треке
+        function updateTrackInfo(track, index) {
+            if (track) {
+                trackName.textContent = track.name;
+                trackArtist.textContent = 'SelJax Radio';
+                currentIndex = index;
+                renderPlaylist();
+            }
+        }
+
+        // Обновление прогресса
+        function updateProgress() {
+            const duration = 180; // Примерная длительность трека (заглушка)
+            if (currentTime > 0 && duration > 0) {
+                const progress = (currentTime / duration) * 100;
+                progressFill.style.width = Math.min(progress, 100) + '%';
+                currentTimeEl.textContent = formatTime(currentTime);
+                totalTimeEl.textContent = formatTime(duration);
+            }
+        }
+
+        // Таймер обновления прогресса
+        setInterval(() => {
+            if (isPlaying) {
+                currentTime += 1;
+                updateProgress();
+                // Отправляем время на сервер
+                fetch(`${SERVER_URL}/api/time`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ time: currentTime })
+                }).catch(() => {});
+            }
+        }, 1000);
+
+        // ============================================================
+        // WEBSOCKET СОБЫТИЯ
+        // ============================================================
+
+        socket.on('connect', () => {
+            setStatus(true);
+            console.log('✅ Подключено к радио-серверу');
+        });
+
+        socket.on('disconnect', () => {
+            setStatus(false);
+            console.warn('❌ Соединение с сервером потеряно');
+        });
+
+        socket.on('init', (data) => {
+            if (data.track) {
+                currentTrack = data.track;
+                currentIndex = data.index || 0;
+                isPlaying = data.isPlaying || false;
+                currentTime = data.currentTime || 0;
+                updateTrackInfo(currentTrack, currentIndex);
+                playBtn.textContent = isPlaying ? '⏸' : '▶';
+                updateProgress();
+                // Загружаем плейлист
+                fetchPlaylist();
+            }
+        });
+
+        socket.on('track-change', (data) => {
+            currentTrack = data.track;
+            currentIndex = data.index;
+            currentTime = 0;
+            isPlaying = true;
+            updateTrackInfo(currentTrack, currentIndex);
+            playBtn.textContent = '⏸';
+            updateProgress();
+        });
+
+        socket.on('toggle', (data) => {
+            isPlaying = data.isPlaying;
+            playBtn.textContent = isPlaying ? '⏸' : '▶';
+        });
+
+        socket.on('playlist-update', (data) => {
+            playlist = data;
+            renderPlaylist();
+        });
+
+        // ============================================================
+        // API ЗАПРОСЫ
+        // ============================================================
+
+        async function fetchPlaylist() {
+            try {
+                const res = await fetch(`${SERVER_URL}/api/playlist`);
+                if (res.ok) {
+                    playlist = await res.json();
+                    renderPlaylist();
+                }
+            } catch (e) {
+                console.warn('Не удалось загрузить плейлист:', e);
+            }
+        }
+
+        // ============================================================
+        // УПРАВЛЕНИЕ
+        // ============================================================
+
+        playBtn.addEventListener('click', () => {
+            fetch(`${SERVER_URL}/api/toggle`, { method: 'POST' })
+                .then(res => res.json())
+                .then(data => {
+                    isPlaying = data.isPlaying;
+                    playBtn.textContent = isPlaying ? '⏸' : '▶';
+                })
+                .catch(() => {});
+        });
+
+        nextBtn.addEventListener('click', () => {
+            fetch(`${SERVER_URL}/api/next`, { method: 'POST' }).catch(() => {});
+        });
+
+        prevBtn.addEventListener('click', () => {
+            fetch(`${SERVER_URL}/api/prev`, { method: 'POST' }).catch(() => {});
+        });
+
+        // ============================================================
+        // ЗАПУСК
+        // ============================================================
+
+        fetchPlaylist();
+
+        console.log('🎵 SelRadio — подключение к серверу...');
+        console.log(`📡 Сервер: ${SERVER_URL}`);
+    </script>
+</body>
+</html>

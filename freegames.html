@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Steam Games :: SelJax</title>
+    <link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            font-family: 'Abel', 'Courier New', monospace;
+            background: #0b0e14;
+            color: #a0f0a0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            background-image: radial-gradient(circle at 20% 30%, #0f1a0f 0%, #030503 100%);
+            position: relative;
+        }
+
+        /* эффект сканирующей линии */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(0deg,
+                rgba(0, 255, 0, 0.015) 0px,
+                rgba(0, 255, 0, 0.015) 2px,
+                transparent 2px,
+                transparent 8px);
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        /* ----- ЭФФЕКТ ДОЖДЯ ----- */
+        .rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 255, 0, 0.03) 0,
+                rgba(0, 255, 0, 0.06) 2px,
+                transparent 4px
+            );
+            animation: rain 10s linear infinite;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes rain {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        /* ----- ЛОГОТИП (правый нижний угол) ----- */
+        .logo {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+            opacity: 0.5;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .logo:hover {
+            opacity: 1;
+        }
+
+        .logo img {
+            max-height: 40px;
+            width: auto;
+            filter: drop-shadow(0 0 10px rgba(0, 255, 0, 0.2));
+        }
+
+        /* ----- КНОПКА НАЗАД ----- */
+        .back-btn {
+            position: fixed;
+            top: 25px;
+            left: 30px;
+            z-index: 1000;
+            color: #4a7a4a;
+            text-decoration: none;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: 0.3s;
+            border: 1px solid #1f3a2a;
+            padding: 8px 20px;
+            border-radius: 4px;
+        }
+
+        .back-btn:hover {
+            color: #b0f0b0;
+            border-color: #4a8a4a;
+            box-shadow: 0 0 20px rgba(0, 60, 0, 0.2);
+        }
+
+        .back-btn::before {
+            content: '← ';
+            color: #3a7a3a;
+        }
+
+        /* ----- ЗАГОЛОВОК "Архив SelJax" (правый верхний угол) ----- */
+        .header-title {
+            position: fixed;
+            top: 25px;
+            right: 30px;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .matrix-text {
+            color: #0f0;
+            font-size: 28px;
+            font-family: 'Courier New', monospace;
+            position: relative;
+            text-shadow: 0 0 10px #0f0, 0 0 20px #0f0, 0 0 30px #0f0;
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+
+        .matrix-text::before {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            animation: glitch 2s infinite;
+            clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+            transform: translate(-2px, -2px);
+            color: #0f0;
+            text-shadow: 0 0 5px #0f0, 0 0 15px #0f0;
+        }
+
+        @keyframes glitch {
+            0%, 100% {
+                clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+                transform: translate(0);
+            }
+            33% {
+                clip-path: polygon(0 0, 100% 0, 100% 15%, 0 15%);
+                transform: translate(-3px, -3px);
+            }
+            66% {
+                clip-path: polygon(0 85%, 100% 85%, 100% 100%, 0 100%);
+                transform: translate(3px, 3px);
+            }
+        }
+
+        /* ----- ОСНОВНОЙ КОНТЕЙНЕР ----- */
+        .games-container {
+            position: relative;
+            z-index: 2;
+            padding: 80px 40px 40px 40px;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .games-container::-webkit-scrollbar {
+            width: 8px;
+            background: #0b141c;
+        }
+        .games-container::-webkit-scrollbar-track {
+            background: #0b141c;
+        }
+        .games-container::-webkit-scrollbar-thumb {
+            background: #1f4a1f;
+            border: 1px solid #2a5a2a;
+        }
+        .games-container::-webkit-scrollbar-thumb:hover {
+            background: #3a7a3a;
+        }
+
+        .page-title {
+            font-size: 36px;
+            font-weight: 700;
+            color: #0f0;
+            text-shadow: 0 0 20px #0f0, 0 0 40px #0f0, 0 0 80px rgba(0, 255, 0, 0.2);
+            font-family: 'Courier New', monospace;
+            letter-spacing: 6px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .page-title .highlight {
+            color: #80d080;
+            text-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+        }
+
+        .page-subtitle {
+            font-size: 14px;
+            color: #4f7a4f;
+            letter-spacing: 3px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+
+        .page-subtitle::before {
+            content: '$ ';
+            color: #3a7a3a;
+        }
+
+        .page-subtitle .count {
+            color: #80d080;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.1);
+        }
+
+        /* ----- КАРТОЧКИ ИГР ----- */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .game-card {
+            background: rgba(12, 20, 28, 0.85);
+            border: 1px solid #1f3a2a;
+            border-radius: 0;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .game-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #60d060;
+            transition: 0.3s ease;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+            border-color: #50b050;
+            box-shadow: 0 0 40px rgba(0, 60, 0, 0.2);
+            background: rgba(13, 26, 34, 0.9);
+        }
+
+        .game-card:hover::after {
+            width: 100%;
+        }
+
+        .game-card .game-image {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            background: #0a1218;
+            border: 1px solid #1a2a2a;
+            margin-bottom: 12px;
+        }
+
+        .game-card .game-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #b0f0b0;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            flex: 1;
+        }
+
+        .game-card .game-name::before {
+            content: '> ';
+            color: #3a8a3a;
+        }
+
+        .game-card .game-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(26, 42, 42, 0.5);
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .game-card .game-status {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 2px 12px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .game-card .game-status.active {
+            color: #7aaa7a;
+            border: 1px solid #2a6a2a;
+        }
+
+        .game-card .game-status.upcoming {
+            color: #9a8a3a;
+            border: 1px solid #5a4a2a;
+        }
+
+        .game-card .game-status.ended {
+            color: #7a4a4a;
+            border: 1px solid #5a2a2a;
+        }
+
+        .game-card .game-date {
+            font-size: 11px;
+            color: #4a7a4a;
+            font-family: 'Courier New', monospace;
+        }
+
+        .game-card .game-link {
+            color: #5a8a5a;
+            text-decoration: none;
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+            transition: 0.3s;
+            border-bottom: 1px dashed transparent;
+        }
+
+        .game-card .game-link:hover {
+            color: #b0f0b0;
+            border-bottom-color: #4a8a4a;
+        }
+
+        /* ----- СТАТУС ЗАГРУЗКИ ----- */
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: #4a7a4a;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            letter-spacing: 2px;
+        }
+
+        .loading .spinner {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 2px solid #1a3a1a;
+            border-top-color: #4a9a4a;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .no-games {
+            text-align: center;
+            padding: 60px 20px;
+            color: #4a7a4a;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            letter-spacing: 1px;
+        }
+
+        .no-games .icon {
+            font-size: 48px;
+            display: block;
+            margin-bottom: 16px;
+            color: #3a6a3a;
+        }
+
+        /* ----- ТЕРМИНАЛЬНАЯ СТРОКА ----- */
+        .terminal-line {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 10px;
+            color: #4a7a4a;
+            font-size: 13px;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
+            padding-bottom: 10px;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 20px;
+            background: #4a7a4a;
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* ----- АДАПТИВНОСТЬ ----- */
+        @media (max-width: 720px) {
+            .page-title {
+                font-size: 26px;
+                letter-spacing: 4px;
+            }
+            .games-container {
+                padding: 70px 16px 20px 16px;
+            }
+            .games-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 14px;
+            }
+            .game-card .game-image {
+                height: 80px;
+            }
+            .game-card .game-name {
+                font-size: 13px;
+            }
+            .matrix-text {
+                font-size: 20px;
+            }
+            .header-title {
+                top: 15px;
+                right: 20px;
+            }
+            .back-btn {
+                top: 15px;
+                left: 20px;
+                font-size: 12px;
+                padding: 6px 14px;
+            }
+            .logo img {
+                max-height: 30px;
+            }
+            .logo {
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-title {
+                font-size: 20px;
+                letter-spacing: 2px;
+            }
+            .page-subtitle {
+                font-size: 11px;
+                letter-spacing: 2px;
+                margin-bottom: 20px;
+            }
+            .games-container {
+                padding: 60px 12px 16px 12px;
+            }
+            .games-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            .game-card .game-image {
+                height: 100px;
+            }
+            .game-card .game-name {
+                font-size: 14px;
+            }
+            .matrix-text {
+                font-size: 16px;
+            }
+            .header-title {
+                top: 12px;
+                right: 15px;
+            }
+            .back-btn {
+                top: 12px;
+                left: 15px;
+                font-size: 10px;
+                padding: 4px 12px;
+            }
+            .logo img {
+                max-height: 24px;
+            }
+            .logo {
+                bottom: 15px;
+                right: 15px;
+            }
+            .terminal-line {
+                font-size: 11px;
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== ЭФФЕКТ ДОЖДЯ ===== -->
+    <div class="rain"></div>
+
+    <!-- ===== КНОПКА НАЗАД ===== -->
+    <a href="index.html" class="back-btn">Назад</a>
+
+    <!-- ===== ЗАГОЛОВОК "Архив SelJax" ===== -->
+    <div class="header-title">
+        <div class="matrix-text" data-text="Архив SelJax">Архив SelJax</div>
+    </div>
+
+    <!-- ===== ЛОГОТИП ===== -->
+    <div class="logo">
+        <img src="images/seljax_logo.png" alt="Seljax Logo">
+    </div>
+
+    <!-- ===== ОСНОВНОЙ КОНТЕНТ ===== -->
+    <div class="games-container" id="gamesContainer">
+        <div class="page-title">
+            <span class="highlight">♢</span> FREE STEAM <span class="highlight">♢</span>
+        </div>
+        <div class="page-subtitle">
+            бесплатные раздачи · <span class="count" id="gameCount">0</span> доступно
+        </div>
+
+        <!-- Сетка игр -->
+        <div class="games-grid" id="gamesGrid">
+            <div class="loading">
+                <div class="spinner"></div>
+                <div>Загрузка игр...</div>
+            </div>
+        </div>
+
+        <!-- Терминальная строка -->
+        <div class="terminal-line">
+            <span>root@archive:~$</span>
+            <span>./steam_free.sh --fetch</span>
+            <span class="cursor"></span>
+        </div>
+    </div>
+
+    <script>
+        // ================================================================
+        // GAMERPOWER API — БЕСПЛАТНЫЕ ИГРЫ STEAM
+        // ================================================================
+
+        const API_URL = 'https://www.gamerpower.com/api/giveaways?platform=steam&type=game&sort-by=date';
+        const gamesGrid = document.getElementById('gamesGrid');
+        const gameCount = document.getElementById('gameCount');
+
+        // ================================================================
+        // ЗАГРУЗКА ИГР
+        // ================================================================
+        async function fetchGames() {
+            try {
+                gamesGrid.innerHTML = `
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <div>Загрузка игр...</div>
+                    </div>
+                `;
+
+                const response = await fetch(API_URL);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (!data || !Array.isArray(data) || data.length === 0) {
+                    showNoGames();
+                    return;
+                }
+
+                // Фильтруем только активные и предстоящие
+                const filtered = data.filter(game => {
+                    return game.status === 'Active' || game.status === 'Upcoming';
+                });
+
+                if (filtered.length === 0) {
+                    showNoGames();
+                    return;
+                }
+
+                renderGames(filtered);
+
+            } catch (error) {
+                console.error('Ошибка загрузки игр:', error);
+                showNoGames('Не удалось загрузить игры. Попробуйте позже.');
+            }
+        }
+
+        // ================================================================
+        // ОТОБРАЖЕНИЕ ИГР
+        // ================================================================
+        function renderGames(games) {
+            gameCount.textContent = games.length;
+
+            // Ограничиваем до 30 игр
+            const displayGames = games.slice(0, 30);
+
+            let html = '';
+            displayGames.forEach(game => {
+                const statusMap = {
+                    'Active': 'Доступна',
+                    'Upcoming': 'Скоро',
+                    'Expired': 'Завершена'
+                };
+                const statusClass = game.status === 'Active' ? 'active' :
+                                   game.status === 'Upcoming' ? 'upcoming' : 'ended';
+                const statusText = statusMap[game.status] || game.status || 'Доступна';
+
+                // Форматируем дату окончания
+                let endDate = '';
+                if (game.end_date) {
+                    const date = new Date(game.end_date);
+                    if (!isNaN(date.getTime())) {
+                        endDate = date.toLocaleDateString('ru-RU', {
+                            day: '2-digit',
+                            month: 'short',
+                            year: 'numeric'
+                        });
+                    }
+                }
+
+                // Изображение
+                const imageUrl = game.thumbnail || game.image || '';
+
+                const imageHtml = imageUrl ?
+                    `<img class="game-image" src="${imageUrl}" alt="${game.title}" onerror="this.style.display='none'">` :
+                    `<div class="game-image" style="display:flex;align-items:center;justify-content:center;color:#2a4a2a;font-size:40px;">🎮</div>`;
+
+                // Ссылка на Steam (из поля open_giveaway_url или game_url)
+                const gameLink = game.open_giveaway_url || game.game_url || '#';
+
+                html += `
+                    <div class="game-card">
+                        ${imageHtml}
+                        <div class="game-name">${game.title || 'Без названия'}</div>
+                        <div class="game-meta">
+                            <span class="game-status ${statusClass}">${statusText}</span>
+                            ${endDate ? `<span class="game-date">до ${endDate}</span>` : ''}
+                            <a href="${gameLink}" class="game-link" target="_blank">Забрать →</a>
+                        </div>
+                    </div>
+                `;
+            });
+
+            gamesGrid.innerHTML = html;
+        }
+
+        // ================================================================
+        // НЕТ ИГР
+        // ================================================================
+        function showNoGames(message) {
+            gamesGrid.innerHTML = `
+                <div class="no-games">
+                    <span class="icon">🎮</span>
+                    ${message || 'Активных раздач пока нет'}
+                    <br>
+                    <span style="font-size:12px;color:#3a5a3a;">Обновляется автоматически</span>
+                </div>
+            `;
+            gameCount.textContent = '0';
+        }
+
+        // ================================================================
+        // ЗАПУСК
+        // ================================================================
+
+        // Проверка на наличие логотипа
+        const logoImg = document.querySelector('.logo img');
+        if (logoImg) {
+            logoImg.addEventListener('error', function() {
+                this.style.display = 'none';
+                console.warn('Логотип не найден: images/seljax_logo.png');
+            });
+        }
+
+        // Загружаем игры
+        fetchGames();
+
+        // Обновляем каждые 10 минут
+        setInterval(fetchGames, 10 * 60 * 1000);
+
+        console.log('%c🎮 Free Steam Games Loader', 'color:#0f0;font-size:16px;');
+        console.log('📡 Источник: GamerPower API (бесплатный)');
+        console.log('🔄 Обновление каждые 10 минут');
+        console.log('📌 URL:', API_URL);
+    </script>
+
+</body>
+</html>

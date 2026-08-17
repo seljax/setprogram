@@ -1,929 +1,731 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ARCHIVE :: ROOT</title>
-  <link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
-  <style>
-    /* ----- базовый сброс ----- */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>АРХИВ :: ROOT</title>
+    <link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    body {
-      width: 100vw;
-      height: 100vh;
-      font-family: 'Abel', 'Courier New', monospace;
-      background: #0b0e14;
-      color: #a0f0a0;
-      overflow: hidden;
-      display: flex;
-      background-image: radial-gradient(circle at 20% 30%, #0f1a0f 0%, #030503 100%);
-      position: relative;
-    }
+        body {
+            width: 100vw;
+            height: 100vh;
+            font-family: 'Abel', 'Courier New', monospace;
+            background: #0b0e14;
+            color: #a0f0a0;
+            overflow: hidden;
+            display: flex;
+            background-image: radial-gradient(circle at 20% 30%, #0f1a0f 0%, #030503 100%);
+            position: relative;
+        }
 
-    /* эффект сканирующей линии */
-    body::after {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: repeating-linear-gradient(0deg,
-        rgba(0, 255, 0, 0.015) 0px,
-        rgba(0, 255, 0, 0.015) 2px,
-        transparent 2px,
-        transparent 8px);
-      pointer-events: none;
-      z-index: 999;
-    }
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(0deg,
+                rgba(0, 255, 0, 0.015) 0px,
+                rgba(0, 255, 0, 0.015) 2px,
+                transparent 2px,
+                transparent 8px);
+            pointer-events: none;
+            z-index: 999;
+        }
 
-    /* ----- ЗАГОЛОВОК "Архив SelJax" (правый верхний угол) ----- */
-    .header-title {
-      position: fixed;
-      top: 25px;
-      right: 30px;
-      z-index: 1000;
-      pointer-events: none;
-    }
+        .header-title {
+            position: fixed;
+            top: 25px;
+            right: 30px;
+            z-index: 1000;
+            pointer-events: none;
+        }
 
-    .matrix-text {
-      color: #0f0;
-      font-size: 32px;
-      font-family: 'Courier New', monospace;
-      position: relative;
-      text-shadow: 0 0 10px #0f0, 0 0 20px #0f0, 0 0 30px #0f0;
-      letter-spacing: 2px;
-      font-weight: bold;
-    }
+        .matrix-text {
+            color: #0f0;
+            font-size: 32px;
+            font-family: 'Courier New', monospace;
+            position: relative;
+            text-shadow: 0 0 10px #0f0, 0 0 20px #0f0, 0 0 30px #0f0;
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
 
-    .matrix-text::before {
-      content: attr(data-text);
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      animation: glitch 2s infinite;
-      clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
-      transform: translate(-2px, -2px);
-      color: #0f0;
-      text-shadow: 0 0 5px #0f0, 0 0 15px #0f0;
-    }
+        .matrix-text::before {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            animation: glitch 2s infinite;
+            clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+            transform: translate(-2px, -2px);
+            color: #0f0;
+            text-shadow: 0 0 5px #0f0, 0 0 15px #0f0;
+        }
 
-    /* Glitch effect for the text */
-    @keyframes glitch {
-      0%, 100% {
-        clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
-        transform: translate(0);
-      }
-      33% {
-        clip-path: polygon(0 0, 100% 0, 100% 15%, 0 15%);
-        transform: translate(-3px, -3px);
-      }
-      66% {
-        clip-path: polygon(0 85%, 100% 85%, 100% 100%, 0 100%);
-        transform: translate(3px, 3px);
-      }
-    }
+        @keyframes glitch {
+            0%, 100% { clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%); transform: translate(0); }
+            33% { clip-path: polygon(0 0, 100% 0, 100% 15%, 0 15%); transform: translate(-3px, -3px); }
+            66% { clip-path: polygon(0 85%, 100% 85%, 100% 100%, 0 100%); transform: translate(3px, 3px); }
+        }
 
-    /* Дождь из символов */
-    .rain {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: repeating-linear-gradient(
-        0deg,
-        rgba(0, 255, 0, 0.03) 0,
-        rgba(0, 255, 0, 0.06) 2px,
-        transparent 4px
-      );
-      animation: rain 10s linear infinite;
-      z-index: 0;
-      pointer-events: none;
-    }
+        .rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(0deg,
+                rgba(0, 255, 0, 0.03) 0,
+                rgba(0, 255, 0, 0.06) 2px,
+                transparent 4px);
+            animation: rain 10s linear infinite;
+            z-index: 0;
+            pointer-events: none;
+        }
 
-    @keyframes rain {
-      0% {
-        transform: translateY(-100%);
-      }
-      100% {
-        transform: translateY(100%);
-      }
-    }
+        @keyframes rain {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
 
-    /* ----- ЛОГОТИП (правый нижний угол) ----- */
-    .logo {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      z-index: 1000;
-      opacity: 0.7;
-      transition: opacity 0.3s ease;
-      pointer-events: none;
-    }
+        .logo {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
 
-    .logo:hover {
-      opacity: 1;
-    }
+        .logo:hover { opacity: 1; }
+        .logo img {
+            max-height: 50px;
+            width: auto;
+            filter: drop-shadow(0 0 10px rgba(0, 255, 0, 0.2));
+        }
 
-    .logo img {
-      max-height: 50px;
-      width: auto;
-      filter: drop-shadow(0 0 10px rgba(0, 255, 0, 0.2));
-    }
+        .menu-trigger {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 50px;
+            height: 100%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            background: #0d121c;
+            border-right: 1px solid #1f3a2a;
+            transition: background 0.2s;
+        }
 
-    /* ----- МЕНЮ (фиксированное, не накладывается) ----- */
-    .menu-trigger {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 50px;
-      height: 100%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-      background: #0d121c;
-      border-right: 1px solid #1f3a2a;
-      transition: background 0.2s;
-    }
+        .menu-trigger:hover {
+            background: #111e1a;
+            border-right: none;
+        }
 
-    .menu-trigger:hover {
-      background: #111e1a;
-      border-right: none;
-    }
+        .menu-trigger:hover > .bars > span:first-of-type,
+        .menu-trigger:hover > .bars > span:last-of-type {
+            transform: translateY(-5px);
+            opacity: 0;
+        }
 
-    .menu-trigger:hover > .bars > span:first-of-type,
-    .menu-trigger:hover > .bars > span:last-of-type {
-      transform: translateY(-5px);
-      opacity: 0;
-    }
+        .menu-trigger:hover > .bars > span:nth-of-type(2) {
+            transform: scaleY(1.2);
+            transform-origin: center bottom;
+        }
 
-    .menu-trigger:hover > .bars > span:nth-of-type(2) {
-      transform: scaleY(1.2);
-      transform-origin: center bottom;
-    }
+        .menu-trigger:hover > .menu {
+            transform: translateX(0);
+        }
 
-    .menu-trigger:hover > .menu {
-      transform: translateX(0);
-    }
+        .menu-trigger:hover > .menu > ul > li > p {
+            transform: translateY(0);
+        }
 
-    .menu-trigger:hover > .menu > ul > li > p {
-      transform: translateY(0);
-    }
+        .menu-trigger:hover > .menu-label {
+            opacity: 1;
+        }
 
-    .menu-trigger:hover > .menu-label {
-      opacity: 1;
-    }
+        .menu-label {
+            color: #5a8a5a;
+            font-weight: bold;
+            letter-spacing: 0.2rem;
+            transition: opacity 0.8s cubic-bezier(0.785, 0.135, 0.15, 0.86);
+            position: absolute;
+            opacity: 0;
+            font-size: 0.8rem;
+            z-index: 101;
+            text-transform: uppercase;
+            text-shadow: 0 0 8px #1f4a1f;
+            pointer-events: none;
+            bottom: 30px;
+            left: 290%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+        }
 
-    .menu-label {
-      color: #5a8a5a;
-      font-weight: bold;
-      letter-spacing: 0.2rem;
-      transition: opacity 0.8s cubic-bezier(0.785, 0.135, 0.15, 0.86);
-      position: absolute;
-      opacity: 0;
-      font-size: 0.8rem;
-      z-index: 101;
-      text-transform: uppercase;
-      text-shadow: 0 0 8px #1f4a1f;
-      pointer-events: none;
-      bottom: 30px;
-      left: 290%;
-      transform: translateX(-50%);
-      white-space: nowrap;
-    }
+        .bars {
+            display: flex;
+            width: 50%;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 10;
+        }
 
-    .bars {
-      display: flex;
-      width: 50%;
-      align-items: center;
-      justify-content: space-between;
-      z-index: 10;
-    }
+        .bars > span {
+            width: 4px;
+            height: 40px;
+            background: #4a7a4a;
+            transition: all 0.4s ease;
+            box-shadow: 0 0 8px rgba(0, 80, 0, 0.3);
+        }
 
-    .bars > span {
-      width: 4px;
-      height: 40px;
-      background: #4a7a4a;
-      transition: all 0.4s ease;
-      box-shadow: 0 0 8px rgba(0, 80, 0, 0.3);
-    }
+        .menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: #0d121c;
+            height: 100%;
+            border-right: 1px solid #1f3a2a;
+            transform: translateX(-100%);
+            transition: all 0.8s cubic-bezier(0.785, 0.135, 0.15, 0.86);
+            padding: 50px 100px 50px 50px;
+            will-change: transform;
+            z-index: 99;
+            box-shadow: inset -10px 0 30px rgba(0, 20, 0, 0.4);
+            width: 320px;
+            pointer-events: none;
+        }
 
-    /* Меню полностью выезжает, не накладываясь */
-    .menu {
-      position: fixed;
-      top: 0;
-      left: 0;
-      background: #0d121c;
-      height: 100%;
-      border-right: 1px solid #1f3a2a;
-      transform: translateX(-100%);
-      transition: all 0.8s cubic-bezier(0.785, 0.135, 0.15, 0.86);
-      padding: 50px 100px 50px 50px;
-      will-change: transform;
-      z-index: 99;
-      box-shadow: inset -10px 0 30px rgba(0, 20, 0, 0.4);
-      width: 300px;
-      pointer-events: none;
-    }
+        .menu-trigger:hover .menu {
+            transform: translateX(0);
+            pointer-events: auto;
+        }
 
-    .menu-trigger:hover .menu {
-      transform: translateX(0);
-      pointer-events: auto;
-    }
+        .menu > ul {
+            list-style: none;
+        }
 
-    .menu > ul:hover > li:not(:hover) {
-      color: rgba(180, 240, 180, 0.4);
-    }
+        .menu > ul:hover > li:not(:hover) {
+            color: rgba(180, 240, 180, 0.4);
+        }
 
-    .menu > ul > li {
-      color: #a0e0a0;
-      font-size: 2rem;
-      cursor: pointer;
-      padding: 10px 0;
-      width: 200px;
-      overflow: hidden;
-      list-style: none;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      text-shadow: 0 0 6px rgba(0, 60, 0, 0.2);
-      transition: color 0.2s ease;
-    }
+        .menu > ul > li {
+            color: #a0e0a0;
+            font-size: 1.4rem;
+            cursor: pointer;
+            padding: 8px 0;
+            width: 220px;
+            overflow: hidden;
+            list-style: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 6px rgba(0, 60, 0, 0.2);
+            transition: color 0.2s ease;
+            border-bottom: 1px solid rgba(26, 42, 42, 0.3);
+        }
 
-    .menu > ul > li:first-of-type {
-      padding-top: 0;
-    }
+        .menu > ul > li:last-child {
+            border-bottom: none;
+        }
 
-    .menu > ul > li:last-of-type {
-      padding-bottom: 0;
-    }
+        .menu > ul > li:nth-of-type(1) > p { transition: transform 0.6s cubic-bezier(0.785, 0.135, 0.15, 0.86) 0.1s, color 0.2s ease; }
+        .menu > ul > li:nth-of-type(2) > p { transition: transform 0.6s cubic-bezier(0.785, 0.135, 0.15, 0.86) 0.15s, color 0.2s ease; }
+        .menu > ul > li:nth-of-type(3) > p { transition: transform 0.6s cubic-bezier(0.785, 0.135, 0.15, 0.86) 0.2s, color 0.2s ease; }
+        .menu > ul > li:nth-of-type(4) > p { transition: transform 0.6s cubic-bezier(0.785, 0.135, 0.15, 0.86) 0.25s, color 0.2s ease; }
+        .menu > ul > li:nth-of-type(5) > p { transition: transform 0.6s cubic-bezier(0.785, 0.135, 0.15, 0.86) 0.3s, color 0.2s ease; }
+        .menu > ul > li:nth-of-type(6) > p { transition: transform 0.6s cubic-bezier(0.785, 0.135, 0.15, 0.86) 0.35s, color 0.2s ease; }
+        .menu > ul > li:nth-of-type(7) > p { transition: transform 0.6s cubic-bezier(0.785, 0.135, 0.15, 0.86) 0.4s, color 0.2s ease; }
+        .menu > ul > li:nth-of-type(8) > p { transition: transform 0.6s cubic-bezier(0.785, 0.135, 0.15, 0.86) 0.45s, color 0.2s ease; }
+        .menu > ul > li:nth-of-type(9) > p { transition: transform 0.6s cubic-bezier(0.785, 0.135, 0.15, 0.86) 0.5s, color 0.2s ease; }
 
-    .menu > ul > li:nth-of-type(1) > p {
-      transition: transform 0.6s cubic-bezier(0.785, 0.135, 0.15, 0.86) 0.1s, color 0.2s ease;
-    }
-    .menu > ul > li:nth-of-type(2) > p {
-      transition: transform 0.6s cubic-bezier(0.785, 0.135, 0.15, 0.86) 0.2s, color 0.2s ease;
-    }
-    .menu > ul > li:nth-of-type(3) > p {
-      transition: transform 0.6s cubic-bezier(0.785, 0.135, 0.15, 0.86) 0.3s, color 0.2s ease;
-    }
-    .menu > ul > li:nth-of-type(4) > p {
-      transition: transform 0.6s cubic-bezier(0.785, 0.135, 0.15, 0.86) 0.4s, color 0.2s ease;
-    }
-    .menu > ul > li:nth-of-type(5) > p {
-      transition: transform 0.6s cubic-bezier(0.785, 0.135, 0.15, 0.86) 0.5s, color 0.2s ease;
-    }
-    .menu > ul > li:nth-of-type(6) > p {
-      transition: transform 0.6s cubic-bezier(0.785, 0.135, 0.15, 0.86) 0.6s, color 0.2s ease;
-    }
+        .menu > ul > li > p {
+            transform: translateY(calc(100% + 10px));
+            font-weight: 400;
+        }
 
-    .menu > ul > li > p {
-      transform: translateY(calc(100% + 10px));
-      font-weight: 400;
-    }
+        .menu > ul > li:hover {
+            color: #b0ffb0;
+            text-shadow: 0 0 20px #2fdf2f;
+        }
 
-    .menu > ul > li:hover {
-      color: #b0ffb0;
-      text-shadow: 0 0 20px #2fdf2f;
-    }
+        .menu > ul > li .sub-items {
+            display: none;
+            padding-left: 20px;
+            margin-top: 4px;
+        }
 
-    /* ----- ОСНОВНОЙ КОНТЕНТ (сдвигается вместе с меню) ----- */
-    .app-wrapper {
-      position: fixed;
-      top: 0;
-      left: 50px;
-      width: calc(100% - 50px);
-      height: 100%;
-      transition: transform 0.8s cubic-bezier(0.785, 0.135, 0.15, 0.86);
-      transform: translateX(0);
-      will-change: transform;
-      z-index: 1;
-    }
+        .menu > ul > li .sub-items li {
+            font-size: 1rem;
+            padding: 4px 0;
+            color: #6a9a6a;
+            border-bottom: none;
+            list-style: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.2s;
+        }
 
-    .menu-trigger:hover + .app-wrapper {
-      transform: translateX(300px);
-    }
+        .menu > ul > li .sub-items li:hover {
+            color: #b0f0b0;
+        }
 
-    .main-content {
-      width: 100%;
-      height: 100%;
-      padding: 36px 44px 40px 44px;
-      overflow-y: auto;
-      background: transparent;
-      position: relative;
-      z-index: 2;
-    }
+        .menu > ul > li .sub-items li p {
+            transform: translateY(0) !important;
+        }
 
-    .main-content::-webkit-scrollbar {
-      width: 8px;
-      background: #0b141c;
-    }
-    .main-content::-webkit-scrollbar-track {
-      background: #0b141c;
-    }
-    .main-content::-webkit-scrollbar-thumb {
-      background: #1f4a1f;
-      border: 1px solid #2a5a2a;
-    }
-    .main-content::-webkit-scrollbar-thumb:hover {
-      background: #3a7a3a;
-    }
+        .app-wrapper {
+            position: fixed;
+            top: 0;
+            left: 50px;
+            width: calc(100% - 50px);
+            height: 100%;
+            transition: transform 0.8s cubic-bezier(0.785, 0.135, 0.15, 0.86);
+            transform: translateX(0);
+            will-change: transform;
+            z-index: 1;
+        }
 
-    /* заголовки (хакер) */
-    .page-title {
-      font-weight: 400;
-      font-size: 26px;
-      color: #90e090;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      text-shadow: 0 0 18px #1f7f1f;
-      margin-bottom: 4px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+        .menu-trigger:hover + .app-wrapper {
+            transform: translateX(320px);
+        }
 
-    .page-title::before {
-      content: '>';
-      color: #50b050;
-      font-weight: 700;
-      text-shadow: 0 0 20px #40d040;
-    }
+        .main-content {
+            width: 100%;
+            height: 100%;
+            padding: 36px 44px 40px 44px;
+            overflow-y: auto;
+            background: transparent;
+            position: relative;
+            z-index: 2;
+        }
 
-    .page-sub {
-      color: #4f7a4f;
-      font-size: 14px;
-      border-bottom: 1px solid #1f3a1f;
-      padding-bottom: 16px;
-      margin-bottom: 28px;
-      letter-spacing: 1px;
-      text-transform: lowercase;
-      font-weight: 300;
-    }
+        .main-content::-webkit-scrollbar {
+            width: 8px;
+            background: #0b141c;
+        }
+        .main-content::-webkit-scrollbar-track { background: #0b141c; }
+        .main-content::-webkit-scrollbar-thumb {
+            background: #1f4a1f;
+            border: 1px solid #2a5a2a;
+        }
+        .main-content::-webkit-scrollbar-thumb:hover { background: #3a7a3a; }
 
-    .page-sub::before {
-      content: '$ ';
-      color: #3a7a3a;
-    }
+        .page-title {
+            font-weight: 400;
+            font-size: 26px;
+            color: #90e090;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-shadow: 0 0 18px #1f7f1f;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-    /* информационные блоки */
-    .info-block {
-      background: rgba(12, 20, 28, 0.85);
-      border-radius: 0;
-      padding: 22px 28px;
-      border-left: 3px solid #50b050;
-      margin-bottom: 22px;
-      border: 1px solid #1a3a1a;
-      border-left-width: 4px;
-      box-shadow: inset 0 0 40px rgba(0, 20, 0, 0.4);
-    }
+        .page-title::before {
+            content: '>';
+            color: #50b050;
+            font-weight: 700;
+            text-shadow: 0 0 20px #40d040;
+        }
 
-    .info-block h3 {
-      font-weight: 400;
-      font-size: 17px;
-      color: #80d080;
-      margin-bottom: 12px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
+        .page-sub {
+            color: #4f7a4f;
+            font-size: 14px;
+            border-bottom: 1px solid #1f3a1f;
+            padding-bottom: 16px;
+            margin-bottom: 28px;
+            letter-spacing: 1px;
+            text-transform: lowercase;
+            font-weight: 300;
+        }
 
-    .info-block h3::before {
-      content: '# ';
-      color: #3a8a3a;
-    }
+        .page-sub::before {
+            content: '$ ';
+            color: #3a7a3a;
+        }
 
-    .info-block p {
-      line-height: 1.8;
-      color: #8aba8a;
-      font-size: 15px;
-    }
+        .info-block {
+            background: rgba(12, 20, 28, 0.85);
+            border-radius: 0;
+            padding: 22px 28px;
+            border-left: 3px solid #50b050;
+            margin-bottom: 22px;
+            border: 1px solid #1a3a1a;
+            border-left-width: 4px;
+            box-shadow: inset 0 0 40px rgba(0, 20, 0, 0.4);
+        }
 
-    .info-block .list-item {
-      display: block;
-      padding: 6px 0;
-      border-bottom: 1px solid #1a2a1a;
-      color: #8aba8a;
-    }
+        .info-block h3 {
+            font-weight: 400;
+            font-size: 17px;
+            color: #80d080;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
 
-    .info-block .list-item::before {
-      content: '• ';
-      color: #4a9a4a;
-    }
+        .info-block h3::before {
+            content: '# ';
+            color: #3a8a3a;
+        }
 
-    .info-block .link-list a {
-      display: inline-block;
-      margin: 4px 0;
-      color: #70c070;
-      text-decoration: none;
-      border-bottom: 1px dashed #2a5a2a;
-      transition: 0.15s;
-      font-weight: 400;
-    }
+        .info-block p {
+            line-height: 1.8;
+            color: #8aba8a;
+            font-size: 15px;
+        }
 
-    .info-block .link-list a:hover {
-      color: #b0ffb0;
-      border-bottom-color: #70d070;
-      text-shadow: 0 0 12px #3fcf3f;
-    }
+        .info-block .list-item {
+            display: block;
+            padding: 6px 0;
+            border-bottom: 1px solid #1a2a1a;
+            color: #8aba8a;
+        }
 
-    /* сетка карточек */
-    .items-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 18px;
-    }
+        .info-block .list-item::before {
+            content: '• ';
+            color: #4a9a4a;
+        }
 
-    .item-card {
-      background: rgba(11, 20, 28, 0.85);
-      border-radius: 0;
-      padding: 18px 18px 16px;
-      border: 1px solid #1f3a1f;
-      transition: all 0.15s ease;
-      box-shadow: 0 0 12px rgba(0, 20, 0, 0.2);
-      cursor: pointer;
-      display: block;
-      text-decoration: none;
-      color: #a0e0a0;
-      position: relative;
-    }
+        .info-block .link-list a {
+            display: inline-block;
+            margin: 4px 0;
+            color: #70c070;
+            text-decoration: none;
+            border-bottom: 1px dashed #2a5a2a;
+            transition: 0.15s;
+            font-weight: 400;
+        }
 
-    .item-card::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 0;
-      height: 2px;
-      background: #60d060;
-      transition: 0.2s ease;
-    }
+        .info-block .link-list a:hover {
+            color: #b0ffb0;
+            border-bottom-color: #70d070;
+            text-shadow: 0 0 12px #3fcf3f;
+        }
 
-    .item-card:hover {
-      transform: translateY(-3px);
-      border-color: #50b050;
-      box-shadow: 0 0 30px rgba(0, 60, 0, 0.3);
-      background: rgba(13, 26, 34, 0.9);
-    }
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 18px;
+        }
 
-    .item-card:hover::after {
-      width: 100%;
-    }
+        .item-card {
+            background: rgba(11, 20, 28, 0.85);
+            border-radius: 0;
+            padding: 18px 18px 16px;
+            border: 1px solid #1f3a1f;
+            transition: all 0.15s ease;
+            box-shadow: 0 0 12px rgba(0, 20, 0, 0.2);
+            cursor: pointer;
+            display: block;
+            text-decoration: none;
+            color: #a0e0a0;
+            position: relative;
+        }
 
-    .item-card:active {
-      transform: scale(0.97);
-    }
+        .item-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #60d060;
+            transition: 0.2s ease;
+        }
 
-    .item-card .item-name {
-      font-weight: 400;
-      font-size: 16px;
-      color: #b0f0b0;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-    }
+        .item-card:hover {
+            transform: translateY(-3px);
+            border-color: #50b050;
+            box-shadow: 0 0 30px rgba(0, 60, 0, 0.3);
+            background: rgba(13, 26, 34, 0.9);
+        }
 
-    .item-card .item-name::before {
-      content: '>';
-      color: #3a8a3a;
-      margin-right: 6px;
-    }
+        .item-card:hover::after { width: 100%; }
+        .item-card:active { transform: scale(0.97); }
 
-    .item-card .item-desc {
-      font-size: 13px;
-      color: #6f9a6f;
-      margin-top: 6px;
-      line-height: 1.5;
-      font-weight: 300;
-    }
+        .item-card .item-name {
+            font-weight: 400;
+            font-size: 16px;
+            color: #b0f0b0;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
 
-    .item-card .item-meta {
-      margin-top: 14px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+        .item-card .item-name::before {
+            content: '>';
+            color: #3a8a3a;
+            margin-right: 6px;
+        }
 
-    .item-card .item-tag {
-      font-size: 10px;
-      background: #0f1f0f;
-      color: #5a8a5a;
-      padding: 2px 14px;
-      border-radius: 0;
-      border: 1px solid #1f3a1f;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      font-weight: 300;
-    }
+        .item-card .item-desc {
+            font-size: 13px;
+            color: #6f9a6f;
+            margin-top: 6px;
+            line-height: 1.5;
+            font-weight: 300;
+        }
 
-    .item-card .item-action {
-      display: none;
-    }
+        .item-card .item-meta {
+            margin-top: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-    /* ----- АДАПТИВНОСТЬ ----- */
-    @media (max-width: 720px) {
-      .menu-trigger {
-        width: 40px;
-      }
-      .menu {
-        padding: 30px 60px 30px 30px;
-        width: 250px;
-      }
-      .menu > ul > li {
-        font-size: 1.4rem;
-        padding: 6px 0;
-        width: 140px;
-      }
-      .app-wrapper {
-        left: 40px;
-        width: calc(100% - 40px);
-      }
-      .menu-trigger:hover + .app-wrapper {
-        transform: translateX(250px);
-      }
-      .main-content {
-        padding: 20px 16px 20px 20px;
-      }
-      .page-title {
-        font-size: 20px;
-      }
-      .items-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-      .logo img {
-        max-height: 35px;
-      }
-      .logo {
-        bottom: 20px;
-        right: 20px;
-      }
-      .matrix-text {
-        font-size: 22px;
-      }
-      .header-title {
-        top: 15px;
-        right: 20px;
-      }
-    }
+        .item-card .item-tag {
+            font-size: 10px;
+            background: #0f1f0f;
+            color: #5a8a5a;
+            padding: 2px 14px;
+            border-radius: 0;
+            border: 1px solid #1f3a1f;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-weight: 300;
+        }
 
-    @media (max-width: 480px) {
-      .menu-trigger {
-        width: 36px;
-      }
-      .menu {
-        padding: 20px 30px 20px 20px;
-        width: 200px;
-      }
-      .menu > ul > li {
-        font-size: 1.1rem;
-        padding: 4px 0;
-        width: 100px;
-      }
-      .app-wrapper {
-        left: 36px;
-        width: calc(100% - 36px);
-      }
-      .menu-trigger:hover + .app-wrapper {
-        transform: translateX(200px);
-      }
-      .main-content {
-        padding: 16px 12px 16px 16px;
-      }
-      .items-grid {
-        grid-template-columns: 1fr;
-      }
-      .logo img {
-        max-height: 28px;
-      }
-      .logo {
-        bottom: 15px;
-        right: 15px;
-      }
-      .matrix-text {
-        font-size: 18px;
-      }
-      .header-title {
-        top: 10px;
-        right: 15px;
-      }
-    }
-  </style>
+        .item-card .item-action { display: none; }
+
+        @media (max-width: 720px) {
+            .menu-trigger { width: 40px; }
+            .menu { padding: 30px 60px 30px 30px; width: 280px; }
+            .menu > ul > li { font-size: 1.2rem; padding: 6px 0; width: 160px; }
+            .menu > ul > li .sub-items li { font-size: 0.9rem; }
+            .app-wrapper { left: 40px; width: calc(100% - 40px); }
+            .menu-trigger:hover + .app-wrapper { transform: translateX(280px); }
+            .main-content { padding: 20px 16px 20px 20px; }
+            .page-title { font-size: 20px; }
+            .items-grid { grid-template-columns: 1fr 1fr; }
+            .logo img { max-height: 35px; }
+            .logo { bottom: 20px; right: 20px; }
+            .matrix-text { font-size: 22px; }
+            .header-title { top: 15px; right: 20px; }
+        }
+
+        @media (max-width: 480px) {
+            .menu-trigger { width: 36px; }
+            .menu { padding: 20px 30px 20px 20px; width: 220px; }
+            .menu > ul > li { font-size: 1rem; padding: 4px 0; width: 130px; }
+            .menu > ul > li .sub-items li { font-size: 0.8rem; }
+            .app-wrapper { left: 36px; width: calc(100% - 36px); }
+            .menu-trigger:hover + .app-wrapper { transform: translateX(220px); }
+            .main-content { padding: 16px 12px 16px 16px; }
+            .items-grid { grid-template-columns: 1fr; }
+            .logo img { max-height: 28px; }
+            .logo { bottom: 15px; right: 15px; }
+            .matrix-text { font-size: 18px; }
+            .header-title { top: 10px; right: 15px; }
+        }
+    </style>
 </head>
 <body>
 
-  <!-- ===== ЭФФЕКТ ДОЖДЯ ===== -->
-  <div class="rain"></div>
+    <div class="rain"></div>
 
-  <!-- ===== ЗАГОЛОВОК "Архив SelJax" (правый верхний угол) ===== -->
-  <div class="header-title">
-    <div class="matrix-text" data-text="Архив SelJax">Архив SelJax</div>
-  </div>
-
-  <!-- ===== ЛОГОТИП (правый нижний угол) ===== -->
-  <div class="logo">
-    <img src="images/seljax_logo.png" alt="Seljax Logo">
-  </div>
-
-  <!-- ===== МЕНЮ (триггер) ===== -->
-  <div class="menu-trigger" id="menuTrigger">
-    <div class="bars">
-      <span></span>
-      <span></span>
-      <span></span>
+    <div class="header-title">
+        <div class="matrix-text" data-text="Архив SelJax">Архив SelJax</div>
     </div>
-    <span class="menu-label">menu</span>
-    <nav class="menu" id="sideMenu">
-      <ul class="category-list" id="categoryList">
-        <li data-category="home"><p>home</p></li>
-        <li data-category="utils"><p>utils</p></li>
-        <li data-category="dev"><p>dev</p></li>
-        <li data-category="design"><p>design</p></li>
-        <li data-category="docs"><p>docs</p></li>
-        <li data-category="notes"><p>notes</p></li>
-      </ul>
-    </nav>
-  </div>
 
-  <!-- ===== ОБЕРТКА (сдвигается вместе с меню) ===== -->
-  <div class="app-wrapper" id="appWrapper">
-    <!-- ===== ОСНОВНОЙ КОНТЕНТ ===== -->
-    <main class="main-content" id="mainContent">
-      <!-- динамический рендер через JavaScript -->
-    </main>
-  </div>
+    <div class="logo">
+        <img src="images/seljax_logo.png" alt="Seljax Logo">
+    </div>
 
-  <script>
-    (function() {
-      // ================================================================
-      // ПРОВЕРКА НА 404 ОШИБКУ
-      // ================================================================
-      (function check404() {
-        // Проверяем, не является ли текущая страница error404.html
-        if (window.location.pathname.includes('error404.html')) {
-          return; // Если уже на странице 404 — ничего не делаем
-        }
+    <div class="menu-trigger" id="menuTrigger">
+        <div class="bars">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <span class="menu-label">меню</span>
+        <nav class="menu" id="sideMenu">
+            <ul class="category-list" id="categoryList">
+                <li data-link="index.html">
+                    <p>Главная</p>
+                </li>
+                <li data-has-sub="true">
+                    <p>Программное обеспечение</p>
+                    <ul class="sub-items">
+                        <li data-link="utils.html"><p>Утилиты</p></li>
+                        <li data-link="dev.html"><p>Разработка</p></li>
+                        <li data-link="design.html"><p>Дизайн</p></li>
+                        <li data-link="docs.html"><p>Документация</p></li>
+                    </ul>
+                </li>
+                <li data-link="freegames.html">
+                    <p>Раздача игр (Steam)</p>
+                </li>
+                <li data-link="password.html">
+                    <p>Генерация паролей</p>
+                </li>
+                <li data-link="radio.html">
+                    <p>SelRadio</p>
+                </li>
+                <li data-link="donate.html">
+                    <p>Поддержать</p>
+                </li>
+                <li data-link="servers.html">
+                    <p>Игровые сервера</p>
+                </li>
+                <li data-link="engineering.html">
+                    <p>Инженерия</p>
+                </li>
+                <li data-link="content.html">
+                    <p>Интересный контент</p>
+                </li>
+            </ul>
+        </nav>
+    </div>
 
-        // Проверяем, есть ли параметр ?404 или ?error=404 в URL
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('error') === '404' || urlParams.get('404') !== null) {
-          window.location.href = 'error404.html';
-          return;
-        }
-
-        // Проверяем, не является ли страница 404 по другим признакам
-        // (например, если в title есть "404" или путь содержит несуществующий файл)
-        if (document.title.includes('404') || 
-            document.title.includes('Not Found') ||
-            document.title.includes('Страница не найдена')) {
-          window.location.href = 'error404.html';
-          return;
-        }
-
-        // Перехватываем клики по ссылкам для проверки
-        document.addEventListener('click', function(e) {
-          const link = e.target.closest('a');
-          if (link && link.href && !link.href.startsWith('#') && 
-              !link.href.startsWith('javascript:') && !link.href.includes('error404.html')) {
-            
-            // Проверяем, ведёт ли ссылка на существующий файл
-            // (простая проверка для демонстрации)
-            const url = new URL(link.href);
-            const path = url.pathname;
-            
-            // Если путь заканчивается на .html или .htm, но не является index.html или error404.html
-            if ((path.endsWith('.html') || path.endsWith('.htm')) && 
-                !path.endsWith('index.html') && 
-                !path.endsWith('error404.html') &&
-                !path.endsWith('/')) {
-              
-              // Проверяем, есть ли такой файл в списке существующих
-              // (это упрощённая проверка для демонстрации)
-              const existingPages = ['index.html', 'error404.html'];
-              const pageName = path.split('/').pop();
-              
-              if (!existingPages.includes(pageName) && pageName !== '') {
-                e.preventDefault();
-                window.location.href = 'error404.html';
-              }
-            }
-          }
-        });
-      })();
-
-      // ================================================================
-      // ДАННЫЕ
-      // ================================================================
-      const data = {
-        home: {
-          title: 'home',
-          subtitle: 'system overview · root access',
-          type: 'info',
-          content: `
+    <div class="app-wrapper" id="appWrapper">
+        <main class="main-content" id="mainContent">
+            <div class="page-title">Главная</div>
+            <div class="page-sub">system overview · root access</div>
             <div class="info-block">
-              <h3>catalog :: resources</h3>
-              <p>
-                [*] archive contains programs, documentation and notes.<br>
-                [*] use left panel to navigate between categories.<br>
-                [*] all cards are clickable — open in new context.
-              </p>
-              <div style="margin-top: 18px; display: flex; gap: 12px; flex-wrap: wrap;">
-                <span style="background:#0f1f0f; padding:4px 18px; border:1px solid #1f3a1f; font-size:12px; color:#5a8a5a;">utils</span>
-                <span style="background:#0f1f0f; padding:4px 18px; border:1px solid #1f3a1f; font-size:12px; color:#5a8a5a;">dev</span>
-                <span style="background:#0f1f0f; padding:4px 18px; border:1px solid #1f3a1f; font-size:12px; color:#5a8a5a;">design</span>
-                <span style="background:#0f1f0f; padding:4px 18px; border:1px solid #1f3a1f; font-size:12px; color:#5a8a5a;">docs</span>
-              </div>
-            </div>
-            <div class="info-block" style="border-left-color:#3a7a3a;">
-              <h3>structure</h3>
-              <p style="color:#7aaa7a;">
-                each category contains tools or records.<br>
-                click on any card to open (target blank).
-              </p>
-            </div>
-          `
-        },
-        utils: {
-          title: 'utils',
-          subtitle: 'system & auxiliary tools',
-          type: 'grid',
-          items: [
-            { name: 'CCleaner', desc: 'system cleaner & registry', tag: 'system', link: '#' },
-            { name: '7-Zip', desc: 'high compression archiver', tag: 'file', link: '#' },
-            { name: 'HWMonitor', desc: 'hardware monitoring', tag: 'hardware', link: '#' },
-            { name: 'KeePass', desc: 'encrypted password manager', tag: 'security', link: '#' },
-          ]
-        },
-        dev: {
-          title: 'dev',
-          subtitle: 'editors, IDE, coding tools',
-          type: 'grid',
-          items: [
-            { name: 'VS Code', desc: 'multi-language code editor', tag: 'editor', link: '#' },
-            { name: 'PyCharm', desc: 'python development environment', tag: 'IDE', link: '#' },
-            { name: 'Chrome DevTools', desc: 'web debugging & profiling', tag: 'debug', link: '#' },
-            { name: 'Git', desc: 'distributed version control', tag: 'VCS', link: '#' },
-          ]
-        },
-        design: {
-          title: 'design',
-          subtitle: 'graphics, layouts, editors',
-          type: 'grid',
-          items: [
-            { name: 'Figma', desc: 'vector UI/UX design', tag: 'UI/UX', link: '#' },
-            { name: 'GIMP', desc: 'raster graphics & retouch', tag: 'editor', link: '#' },
-            { name: 'Inkscape', desc: 'vector graphics (SVG)', tag: 'vector', link: '#' },
-            { name: 'DaVinci Resolve', desc: 'non-linear video editing', tag: 'video', link: '#' },
-          ]
-        },
-        docs: {
-          title: 'docs',
-          subtitle: 'manuals, cheatsheets, PDF',
-          type: 'grid',
-          items: [
-            { name: 'Python 3', desc: 'basic syntax reference', tag: 'lang', link: '#' },
-            { name: 'Docker', desc: 'commands & examples', tag: 'containers', link: '#' },
-            { name: 'GitHub Actions', desc: 'CI/CD pipelines', tag: 'automation', link: '#' },
-            { name: 'Markdown', desc: 'README & docs formatting', tag: 'markup', link: '#' },
-          ]
-        },
-        notes: {
-          title: 'notes',
-          subtitle: 'logs · tasks · links',
-          type: 'info',
-          content: `
-            <div class="info-block" style="border-left-color:#3a7a3a;">
-              <h3>current tasks</h3>
-              <p>
-                <span class="list-item">update drivers on workstation</span>
-                <span class="list-item">write article about containerization</span>
-                <span class="list-item">backup databases (cron)</span>
-                <span class="list-item">explore TypeScript 5.x features</span>
-              </p>
-            </div>
-            <div class="info-block" style="border-left-color:#2a6a2a;">
-              <h3>links</h3>
-              <div class="link-list">
-                <a href="#">→ Habr / dev</a><br>
-                <a href="#">→ GitHub Trending</a><br>
-                <a href="#">→ Stack Overflow</a><br>
-                <a href="#">→ MDN docs</a>
-              </div>
-            </div>
-            <div class="info-block" style="border-left-color:#3a6a3a;">
-              <h3>archive logs</h3>
-              <p style="color:#6f9a6f; font-size:14px;">
-                • python + poetry environment setup<br>
-                • backup script (bash)<br>
-                • VS Code extensions list
-              </p>
-            </div>
-          `
-        }
-      };
-
-      // ================================================================
-      // РЕНДЕР
-      // ================================================================
-      function renderCategory(categoryKey) {
-        const section = data[categoryKey];
-        if (!section) return;
-
-        const container = document.getElementById('mainContent');
-
-        if (section.type === 'info') {
-          container.innerHTML = `
-            <div class="page-title">${section.title}</div>
-            <div class="page-sub">${section.subtitle}</div>
-            ${section.content}
-          `;
-          return;
-        }
-
-        if (section.type === 'grid' && Array.isArray(section.items)) {
-          let cardsHtml = section.items.map(item => {
-            const link = item.link || '#';
-            return `
-              <a href="${link}" class="item-card" target="_blank" rel="noopener noreferrer">
-                <div class="item-name">${item.name}</div>
-                <div class="item-desc">${item.desc}</div>
-                <div class="item-meta">
-                  <span class="item-tag">${item.tag || 'tool'}</span>
+                <h3>Каталог ресурсов</h3>
+                <p>
+                    [*] Архив содержит программы, документацию и заметки.<br>
+                    [*] Используйте левую панель для навигации.<br>
+                    [*] Все карточки кликабельны — открываются в новой вкладке.
+                </p>
+                <div style="margin-top: 18px; display: flex; gap: 12px; flex-wrap: wrap;">
+                    <span style="background:#0f1f0f; padding:4px 18px; border:1px solid #1f3a1f; font-size:12px; color:#5a8a5a;">утилиты</span>
+                    <span style="background:#0f1f0f; padding:4px 18px; border:1px solid #1f3a1f; font-size:12px; color:#5a8a5a;">разработка</span>
+                    <span style="background:#0f1f0f; padding:4px 18px; border:1px solid #1f3a1f; font-size:12px; color:#5a8a5a;">дизайн</span>
+                    <span style="background:#0f1f0f; padding:4px 18px; border:1px solid #1f3a1f; font-size:12px; color:#5a8a5a;">документация</span>
                 </div>
-              </a>
-            `;
-          }).join('');
+            </div>
+            <div class="info-block" style="border-left-color:#3a7a3a;">
+                <h3>Структура</h3>
+                <p style="color:#7aaa7a;">
+                    Каждая категория содержит инструменты или записи.<br>
+                    Нажмите на любую карточку, чтобы открыть.
+                </p>
+            </div>
+        </main>
+    </div>
 
-          container.innerHTML = `
-            <div class="page-title">${section.title}</div>
-            <div class="page-sub">${section.subtitle}</div>
-            <div class="items-grid">${cardsHtml}</div>
-          `;
-        }
-      }
+    <script>
+        (function() {
+            // ============================================================
+            // НАВИГАЦИЯ
+            // ============================================================
+            const menuTrigger = document.getElementById('menuTrigger');
+            const appWrapper = document.getElementById('appWrapper');
+            const mainContent = document.getElementById('mainContent');
+            let isMenuOpen = false;
 
-      // ================================================================
-      // УПРАВЛЕНИЕ СДВИГОМ ПРАВОЙ ПАНЕЛИ
-      // ================================================================
-      const menuTrigger = document.getElementById('menuTrigger');
-      const appWrapper = document.getElementById('appWrapper');
-      let isMenuOpen = false;
+            menuTrigger.addEventListener('mouseenter', function() {
+                isMenuOpen = true;
+                appWrapper.style.transform = 'translateX(320px)';
+            });
 
-      menuTrigger.addEventListener('mouseenter', function() {
-        isMenuOpen = true;
-        appWrapper.style.transform = 'translateX(300px)';
-      });
+            menuTrigger.addEventListener('mouseleave', function() {
+                isMenuOpen = false;
+                appWrapper.style.transform = 'translateX(0)';
+            });
 
-      menuTrigger.addEventListener('mouseleave', function() {
-        isMenuOpen = false;
-        appWrapper.style.transform = 'translateX(0)';
-      });
+            mainContent.addEventListener('click', function() {
+                if (isMenuOpen) {
+                    isMenuOpen = false;
+                    appWrapper.style.transform = 'translateX(0)';
+                    menuTrigger.dispatchEvent(new MouseEvent('mouseleave'));
+                }
+            });
 
-      const mainContent = document.getElementById('mainContent');
-      mainContent.addEventListener('click', function() {
-        if (isMenuOpen) {
-          isMenuOpen = false;
-          appWrapper.style.transform = 'translateX(0)';
-          menuTrigger.dispatchEvent(new MouseEvent('mouseleave'));
-        }
-      });
+            // ============================================================
+            // ОБРАБОТЧИКИ КЛИКОВ ПО МЕНЮ
+            // ============================================================
+            const menuItems = document.querySelectorAll('.category-list > li[data-link]');
 
-      // ================================================================
-      // НАВИГАЦИЯ
-      // ================================================================
-      const menuItems = document.querySelectorAll('.category-list li');
+            menuItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    const link = this.dataset.link;
+                    if (link) {
+                        window.location.href = link;
+                    }
+                });
+            });
 
-      menuItems.forEach(item => {
-        item.addEventListener('click', function(e) {
-          const category = this.dataset.category;
-          renderCategory(category);
+            // Обработка подпунктов (программное обеспечение)
+            const subItems = document.querySelectorAll('.sub-items li[data-link]');
+            subItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const link = this.dataset.link;
+                    if (link) {
+                        window.location.href = link;
+                    }
+                });
+            });
 
-          menuItems.forEach(li => {
-            li.style.color = '';
-            li.style.textShadow = '';
-          });
-          this.style.color = '#b0ffb0';
-          this.style.textShadow = '0 0 20px #2fdf2f';
-        });
-      });
+            // Раскрытие подменю при наведении на "Программное обеспечение"
+            const softwareItem = document.querySelector('.category-list > li[data-has-sub]');
+            if (softwareItem) {
+                softwareItem.addEventListener('mouseenter', function() {
+                    const subMenu = this.querySelector('.sub-items');
+                    if (subMenu) {
+                        subMenu.style.display = 'block';
+                    }
+                });
+                softwareItem.addEventListener('mouseleave', function() {
+                    const subMenu = this.querySelector('.sub-items');
+                    if (subMenu) {
+                        subMenu.style.display = 'none';
+                    }
+                });
+                // Для клика на самом пункте — перенаправляем на первую подкатегорию
+                softwareItem.addEventListener('click', function(e) {
+                    const firstSub = this.querySelector('.sub-items li[data-link]');
+                    if (firstSub) {
+                        window.location.href = firstSub.dataset.link;
+                    }
+                });
+            }
 
-      // ================================================================
-      // СТАРТ
-      // ================================================================
-      renderCategory('home');
+            // ============================================================
+            // ПРОВЕРКА НА 404
+            // ============================================================
+            (function check404() {
+                if (window.location.pathname.includes('error404.html')) return;
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('error') === '404' || urlParams.get('404') !== null) {
+                    window.location.href = 'error404.html';
+                }
+            })();
 
-      const firstItem = document.querySelector('.category-list li[data-category="home"]');
-      if (firstItem) {
-        firstItem.style.color = '#b0ffb0';
-        firstItem.style.textShadow = '0 0 20px #2fdf2f';
-      }
-    })();
-  </script>
+            // ============================================================
+            // ПРОВЕРКА ЛОГОТИПА
+            // ============================================================
+            const logoImg = document.querySelector('.logo img');
+            if (logoImg) {
+                logoImg.addEventListener('error', function() {
+                    this.style.display = 'none';
+                    console.warn('Логотип не найден: images/seljax_logo.png');
+                });
+            }
+
+            console.log('%c📂 Архив SelJax загружен', 'color:#0f0;font-size:16px;');
+            console.log('📌 Меню на русском языке');
+
+        })();
+    </script>
+
 </body>
 </html>
