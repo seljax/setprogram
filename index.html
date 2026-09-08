@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>АРХИВ :: ROOT</title>
+    <title>АРХИВ :: VOICE AI</title>
     <link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
     <style>
         * {
@@ -503,6 +503,89 @@
 
         .item-card .item-action { display: none; }
 
+        /* ============================================================
+           СТИЛИ ДЛЯ ВСТРОЕННОГО ПЛЕЕРА (voice AI)
+           ============================================================ */
+        .voice-ai-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .voice-ai-container iframe {
+            width: 100%;
+            height: 70vh;
+            min-height: 500px;
+            border: 1px solid #1f3a1f;
+            border-radius: 4px;
+            background: #0b0e14;
+        }
+
+        .voice-ai-controls {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .voice-ai-controls .btn {
+            background: #0f1f0f;
+            color: #80d080;
+            border: 1px solid #1f3a1f;
+            padding: 8px 18px;
+            cursor: pointer;
+            font-family: 'Abel', monospace;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s ease;
+        }
+
+        .voice-ai-controls .btn:hover {
+            background: #1a3a1a;
+            border-color: #50b050;
+            color: #b0f0b0;
+            box-shadow: 0 0 20px rgba(0, 60, 0, 0.2);
+        }
+
+        .voice-ai-controls .btn-primary {
+            background: #1a3a1a;
+            border-color: #3a8a3a;
+            color: #a0e0a0;
+        }
+
+        .voice-ai-controls .btn-primary:hover {
+            background: #2a5a2a;
+            border-color: #60d060;
+        }
+
+        .status-indicator {
+            font-size: 12px;
+            color: #5a8a5a;
+            margin-left: auto;
+        }
+
+        .status-indicator .dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #3a7a3a;
+            margin-right: 6px;
+            animation: pulse-dot 2s infinite;
+        }
+
+        .status-indicator .dot.online {
+            background: #50d050;
+            box-shadow: 0 0 10px #40b040;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
         @media (max-width: 720px) {
             .menu-trigger { width: 40px; }
             .menu { padding: 30px 60px 30px 30px; width: 280px; }
@@ -517,6 +600,7 @@
             .logo { bottom: 20px; right: 20px; }
             .matrix-text { font-size: 22px; }
             .header-title { top: 15px; right: 20px; }
+            .voice-ai-container iframe { height: 55vh; min-height: 350px; }
         }
 
         @media (max-width: 480px) {
@@ -532,6 +616,7 @@
             .logo { bottom: 15px; right: 15px; }
             .matrix-text { font-size: 18px; }
             .header-title { top: 10px; right: 15px; }
+            .voice-ai-container iframe { height: 45vh; min-height: 280px; }
         }
     </style>
 </head>
@@ -577,6 +662,10 @@
                 <li data-link="radio.html">
                     <p>SelRadio</p>
                 </li>
+                <!-- НОВЫЙ ПУНКТ МЕНЮ ДЛЯ VOICE AI -->
+                <li data-link="#voice-ai" data-target="voice-ai">
+                    <p>🎙 Voice AI</p>
+                </li>
                 <li data-link="donate.html">
                     <p>Поддержать</p>
                 </li>
@@ -595,28 +684,89 @@
 
     <div class="app-wrapper" id="appWrapper">
         <main class="main-content" id="mainContent">
-            <div class="page-title">Главная</div>
-            <div class="page-sub">system overview · root access</div>
-            <div class="info-block">
-                <h3>Каталог ресурсов</h3>
-                <p>
-                    [*] Архив содержит программы, документацию и заметки.<br>
-                    [*] Используйте левую панель для навигации.<br>
-                    [*] Все карточки кликабельны — открываются в новой вкладке.
-                </p>
-                <div style="margin-top: 18px; display: flex; gap: 12px; flex-wrap: wrap;">
-                    <span style="background:#0f1f0f; padding:4px 18px; border:1px solid #1f3a1f; font-size:12px; color:#5a8a5a;">утилиты</span>
-                    <span style="background:#0f1f0f; padding:4px 18px; border:1px solid #1f3a1f; font-size:12px; color:#5a8a5a;">разработка</span>
-                    <span style="background:#0f1f0f; padding:4px 18px; border:1px solid #1f3a1f; font-size:12px; color:#5a8a5a;">дизайн</span>
-                    <span style="background:#0f1f0f; padding:4px 18px; border:1px solid #1f3a1f; font-size:12px; color:#5a8a5a;">документация</span>
+            <!-- ГЛАВНАЯ СТРАНИЦА (по умолчанию) -->
+            <div id="page-home">
+                <div class="page-title">Главная</div>
+                <div class="page-sub">system overview · root access</div>
+                <div class="info-block">
+                    <h3>Каталог ресурсов</h3>
+                    <p>
+                        [*] Архив содержит программы, документацию и заметки.<br>
+                        [*] Используйте левую панель для навигации.<br>
+                        [*] Все карточки кликабельны — открываются в новой вкладке.
+                    </p>
+                    <div style="margin-top: 18px; display: flex; gap: 12px; flex-wrap: wrap;">
+                        <span style="background:#0f1f0f; padding:4px 18px; border:1px solid #1f3a1f; font-size:12px; color:#5a8a5a;">утилиты</span>
+                        <span style="background:#0f1f0f; padding:4px 18px; border:1px solid #1f3a1f; font-size:12px; color:#5a8a5a;">разработка</span>
+                        <span style="background:#0f1f0f; padding:4px 18px; border:1px solid #1f3a1f; font-size:12px; color:#5a8a5a;">дизайн</span>
+                        <span style="background:#0f1f0f; padding:4px 18px; border:1px solid #1f3a1f; font-size:12px; color:#5a8a5a;">документация</span>
+                    </div>
+                </div>
+                <div class="info-block" style="border-left-color:#3a7a3a;">
+                    <h3>Структура</h3>
+                    <p style="color:#7aaa7a;">
+                        Каждая категория содержит инструменты или записи.<br>
+                        Нажмите на любую карточку, чтобы открыть.
+                    </p>
                 </div>
             </div>
-            <div class="info-block" style="border-left-color:#3a7a3a;">
-                <h3>Структура</h3>
-                <p style="color:#7aaa7a;">
-                    Каждая категория содержит инструменты или записи.<br>
-                    Нажмите на любую карточку, чтобы открыть.
-                </p>
+
+            <!-- СТРАНИЦА VOICE AI (скрыта по умолчанию) -->
+            <div id="page-voice-ai" style="display:none;">
+                <div class="page-title">Voice AI Studio</div>
+                <div class="page-sub">neural voice synthesis · tts engine</div>
+
+                <div class="info-block" style="border-left-color:#50b050;">
+                    <h3>🎙 Генерация голоса</h3>
+                    <p>
+                        Озвучивание текстов глубоким дикторским голосом на основе примера.<br>
+                        Выберите голос, введите текст и нажмите «Сгенерировать».
+                    </p>
+                </div>
+
+                <!-- Встроенное приложение Voice AI через iframe -->
+                <div class="voice-ai-container">
+                    <div class="voice-ai-controls">
+                        <span style="color:#5a8a5a; font-size:13px;">🔊 Активный движок:</span>
+                        <span style="color:#80d080; font-size:13px; font-weight:bold;">Gemini TTS + Yandex SpeechKit</span>
+                        <span class="status-indicator">
+                            <span class="dot online"></span> API готов
+                        </span>
+                    </div>
+
+                    <!-- Если приложение развёрнуто на отдельном порту или поддомене -->
+                    <iframe
+                        src="./voice_ai/index.html"
+                        title="Voice AI Studio"
+                        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
+                        loading="lazy"
+                    ></iframe>
+
+                    <!-- Альтернатива: прямая ссылка на GitHub Pages -->
+                    <!--
+                    <iframe
+                        src="https://ваш-username.github.io/voice_ai/"
+                        title="Voice AI Studio"
+                        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
+                        loading="lazy"
+                    ></iframe>
+                    -->
+
+                    <div class="voice-ai-controls" style="justify-content:flex-end;">
+                        <button class="btn" onclick="document.querySelector('.voice-ai-container iframe').contentWindow.location.reload();">
+                            🔄 Обновить
+                        </button>
+                        <a href="./voice_ai/index.html" target="_blank" class="btn btn-primary">
+                            ⬆ Открыть в полном окне
+                        </a>
+                    </div>
+
+                    <div style="font-size:12px; color:#4f7a4f; border-top:1px solid #1a2a1a; padding-top:12px; margin-top:4px;">
+                        ⚡ Для работы требуется Gemini API ключ (указывается в настройках приложения).
+                        Бесплатный ключ можно получить в <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:#70c070; text-decoration:none; border-bottom:1px dashed #2a5a2a;">Google AI Studio</a>.
+                        Альтернативно — Яндекс SpeechKit.
+                    </div>
+                </div>
             </div>
         </main>
     </div>
@@ -657,7 +807,15 @@
             menuItems.forEach(item => {
                 item.addEventListener('click', function(e) {
                     const link = this.dataset.link;
-                    if (link) {
+                    const target = this.dataset.target;
+
+                    if (link && link.startsWith('#')) {
+                        // Внутренняя навигация (например, #voice-ai)
+                        e.preventDefault();
+                        const pageId = link.substring(1);
+                        showPage(pageId);
+                    } else if (link) {
+                        // Внешняя навигация
                         window.location.href = link;
                     }
                 });
@@ -690,13 +848,40 @@
                         subMenu.style.display = 'none';
                     }
                 });
-                // Для клика на самом пункте — перенаправляем на первую подкатегорию
                 softwareItem.addEventListener('click', function(e) {
                     const firstSub = this.querySelector('.sub-items li[data-link]');
                     if (firstSub) {
                         window.location.href = firstSub.dataset.link;
                     }
                 });
+            }
+
+            // ============================================================
+            // ФУНКЦИЯ ПЕРЕКЛЮЧЕНИЯ СТРАНИЦ
+            // ============================================================
+            function showPage(pageId) {
+                const homePage = document.getElementById('page-home');
+                const voicePage = document.getElementById('page-voice-ai');
+
+                // Скрываем все страницы
+                if (homePage) homePage.style.display = 'none';
+                if (voicePage) voicePage.style.display = 'none';
+
+                // Показываем нужную
+                if (pageId === 'voice-ai' && voicePage) {
+                    voicePage.style.display = 'block';
+                    // Обновляем заголовок меню
+                    document.querySelector('.page-title').textContent = 'Voice AI Studio';
+                } else if (homePage) {
+                    homePage.style.display = 'block';
+                    document.querySelector('.page-title').textContent = 'Главная';
+                }
+
+                // Закрываем меню после клика
+                if (isMenuOpen) {
+                    isMenuOpen = false;
+                    appWrapper.style.transform = 'translateX(0)';
+                }
             }
 
             // ============================================================
@@ -723,6 +908,7 @@
 
             console.log('%c📂 Архив SelJax загружен', 'color:#0f0;font-size:16px;');
             console.log('📌 Меню на русском языке');
+            console.log('🎙 Voice AI Studio добавлена в меню!');
 
         })();
     </script>
