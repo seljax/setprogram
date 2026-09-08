@@ -1,6 +1,0 @@
-{
-  "name": "Генерация голоса by SelJax",
-  "description": "Озвучивание текстов глубоким дикторским голосом на основе примера, генерация аудио и плеер",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
