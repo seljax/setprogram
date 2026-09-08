@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Генерация голоса by SelJax</title>
+    <meta name="description" content="Озвучивание текстов глубоким дикторским голосом на основе примера, генерация аудио и плеер" />
+    <meta property="og:title" content="Генерация голоса by SelJax" />
+    <meta property="og:description" content="Озвучивание текстов глубоким дикторским голосом на основе примера, генерация аудио и плеер" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body>
+    <div id="root">
+      <div id="local-file-fallback" style="display:none; min-height:100vh; background:#0c0a09; color:#f5f5f4; font-family:system-ui, -apple-system, BlinkMacSystemFont, sans-serif; padding:40px 20px; box-sizing:border-box;">
+        <div style="max-width:680px; margin:0 auto; background:#1c1917; border:1px solid #292524; border-radius:16px; padding:32px; box-shadow:0 20px 40px rgba(0,0,0,0.6);">
+          <div style="display:inline-block; font-size:12px; font-weight:600; background:rgba(245,158,11,0.15); color:#f59e0b; border:1px solid rgba(245,158,11,0.3); padding:3px 10px; border-radius:9999px; margin-bottom:12px;">
+            Инструкция по запуску
+          </div>
+          <h2 style="font-size:22px; font-weight:700; margin:0 0 12px; color:#ffffff;">
+            Проект открыт как локальный файл (file://)
+          </h2>
+          <p style="font-size:14px; color:#a8a29e; line-height:1.6; margin-bottom:20px;">
+            Вы открыли файл исходного кода <code>index.html</code> напрямую через проводник. Браузеры блокируют модули TypeScript и React без веб-сервера по соображениям безопасности (CORS).
+          </p>
+
+          <div style="background:#09090b; border:1px solid #27272a; border-radius:12px; padding:18px; margin-bottom:20px;">
+            <div style="font-size:14px; font-weight:600; color:#fde68a; margin-bottom:8px;">
+              Вариант 1: Открыть плеер без установки программ (быстрый способ)
+            </div>
+            <p style="font-size:13px; color:#d4d4d8; margin-bottom:14px; line-height:1.5;">
+              Рядом в этой же папке находится автономный файл <strong>player.html</strong>. Он уже содержит готовый плеер и озвученную аудиодорожку.
+            </p>
+            <a href="./player.html" style="display:inline-block; background:#f59e0b; color:#0c0a09; font-weight:600; font-size:13px; padding:10px 18px; border-radius:8px; text-decoration:none; transition:opacity 0.2s;">
+              ▶ Открыть готовый плеер (player.html)
+            </a>
+          </div>
+
+          <div style="background:#09090b; border:1px solid #27272a; border-radius:12px; padding:18px;">
+            <div style="font-size:14px; font-weight:600; color:#fde68a; margin-bottom:8px;">
+              Вариант 2: Запуск интерактивной студии (с нейросетью)
+            </div>
+            <p style="font-size:13px; color:#d4d4d8; line-height:1.6; margin-bottom:10px;">
+              Чтобы запустить полный интерфейс студии с возможностью синтеза новых текстов:
+            </p>
+            <ol style="font-size:13px; color:#a1a1aa; line-height:1.7; margin-left:20px; padding:0;">
+              <li>Откройте терминал (командную строку) в папке проекта</li>
+              <li>Выполните: <code style="background:#27272a; color:#fef08a; padding:2px 6px; border-radius:4px;">npm install</code></li>
+              <li>Запустите сервер: <code style="background:#27272a; color:#fef08a; padding:2px 6px; border-radius:4px;">npm run dev</code></li>
+              <li>Откройте ссылку в браузере: <a href="http://localhost:3000" style="color:#60a5fa;">http://localhost:3000</a></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+      <script>
+        // If loaded via file:// protocol or React takes more than 1s to mount, reveal the help screen
+        if (window.location.protocol === 'file:') {
+          document.getElementById('local-file-fallback').style.display = 'block';
+        } else {
+          setTimeout(function() {
+            var rootEl = document.getElementById('root');
+            var fallback = document.getElementById('local-file-fallback');
+            // If fallback is still in root, React hasn't replaced it
+            if (fallback && rootEl.contains(fallback)) {
+              fallback.style.display = 'block';
+            }
+          }, 2500);
+        }
+      </script>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
