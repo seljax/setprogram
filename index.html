@@ -778,7 +778,7 @@
                     </div>
 
                     <iframe
-                        src="./voice_ai/player.html"
+                        src="voice_ai/player.html"
                         title="Voice AI Player"
                         sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
                         loading="lazy"
@@ -788,7 +788,7 @@
                         <button class="btn" onclick="document.querySelector('.voice-ai-container iframe').contentWindow.location.reload();">
                             🔄 Обновить
                         </button>
-                        <a href="./voice_ai/player.html" target="_blank" class="btn btn-primary">
+                        <a href="voice_ai/player.html" target="_blank" class="btn btn-primary">
                             ⬆ Открыть в полном окне
                         </a>
                         <a href="#home" class="btn" onclick="showPage('home'); return false;">
@@ -953,7 +953,7 @@
             console.log('%c📂 Архив SelJax загружен', 'color:#0f0;font-size:16px;');
             console.log('📌 Меню на русском языке');
             console.log('🎙 Voice AI Studio добавлена в меню!');
-            console.log('🔗 Прямая ссылка: https://seljax.github.io/#voice-ai');
+            console.log('🔗 Прямая ссылка: ' + window.location.href + '#voice-ai');
 
         })();
     </script>
